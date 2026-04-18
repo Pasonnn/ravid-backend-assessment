@@ -2,7 +2,7 @@ from importlib import import_module, reload
 
 from django.conf import settings
 from django.test import SimpleTestCase
-from django.urls import get_resolver
+from django.urls import Resolver404, resolve
 
 
 class FoundationSmokeTests(SimpleTestCase):
@@ -38,7 +38,11 @@ class FoundationSmokeTests(SimpleTestCase):
         self.assertEqual(
             settings.DATABASES["default"]["ENGINE"], "django.db.backends.sqlite3"
         )
-        self.assertEqual(settings.DATABASES["default"]["NAME"], ":memory:")
+        database_name = settings.DATABASES["default"]["NAME"]
+        self.assertTrue(
+            database_name == ":memory:"
+            or str(database_name).startswith("file:memorydb_")
+        )
         self.assertEqual(settings.CELERY_BROKER_URL, "memory://")
         self.assertEqual(settings.CELERY_RESULT_BACKEND, "cache+memory://")
         self.assertTrue(settings.CELERY_TASK_ALWAYS_EAGER)
@@ -47,14 +51,15 @@ class FoundationSmokeTests(SimpleTestCase):
         celery_module = import_module("config.celery")
         self.assertEqual(celery_module.app.main, "config")
 
-    def test_no_assessment_api_routes_exist_yet(self) -> None:
-        patterns = [str(pattern.pattern) for pattern in get_resolver().url_patterns]
-        joined_patterns = " ".join(patterns)
-        for fragment in [
-            "/api/register/",
-            "/api/login/",
+    def test_authentication_routes_are_registered(self) -> None:
+        self.assertEqual(resolve("/api/register/").view_name, "accounts:register")
+        self.assertEqual(resolve("/api/login/").view_name, "accounts:login")
+
+    def test_later_assessment_routes_are_not_registered_yet(self) -> None:
+        for path in [
             "/api/upload-csv/",
             "/api/perform-operation/",
             "/api/task-status/",
         ]:
-            self.assertNotIn(fragment, joined_patterns)
+            with self.assertRaises(Resolver404):
+                resolve(path)

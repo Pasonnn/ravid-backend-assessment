@@ -1,6 +1,6 @@
 from .base import *
 
-SECRET_KEY = "django-insecure-test-key"
+SECRET_KEY = "django-insecure-test-key-with-at-least-thirty-two-bytes"
 DEBUG = False
 ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]
 
