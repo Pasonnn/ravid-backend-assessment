@@ -66,6 +66,32 @@ Use these defaults unless the user explicitly overrides them:
   7. Docker and delivery docs
 - Keep API documentation and README in scope from the start.
 
+## Git Workflow
+
+- `main` is merge-only for feature work.
+- Every feature or workstream change must start from a new branch created from the latest `main`.
+- Do not develop feature work directly on `main`.
+- Every feature branch must open a pull request back into `main`.
+- Branch naming format:
+  - `feature/<workstream>-<short-scope>`
+- Branch naming rules:
+  - use lowercase letters only
+  - use kebab-case for both workstream and scope
+  - keep `<short-scope>` concise and implementation-specific
+- Allowed workstream names align with `docs/02-features/`:
+  - `foundation`
+  - `authentication`
+  - `csv-upload`
+  - `processing-pipeline`
+  - `task-status`
+  - `observability`
+  - `docker-and-delivery`
+- Example branch names:
+  - `feature/foundation-django-bootstrap`
+  - `feature/authentication-register-login`
+  - `feature/csv-upload-file-validation`
+  - `feature/processing-pipeline-celery-dispatch`
+
 ## Locked Assessment Decisions
 
 These defaults are already chosen for speed and consistency:

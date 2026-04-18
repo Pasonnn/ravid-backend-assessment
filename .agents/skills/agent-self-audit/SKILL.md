@@ -32,6 +32,8 @@ Check these items in order and keep the output short and concrete.
 
 - Identify whether the work belongs to app, package, docs, infra, or another repo area.
 - Confirm the expected working area and workflow artifacts.
+- Confirm whether the current git branch is valid for the task.
+- If the task is feature work and the agent is on `main`, report that a feature branch must be created before implementation.
 - If the task is obviously mis-routed, say so before coding.
 
 ### 2. Instruction Coverage
