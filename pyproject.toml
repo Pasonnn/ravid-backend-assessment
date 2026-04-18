@@ -8,6 +8,13 @@ version = "0.1.0"
 description = "Private R.A.V.I.D. backend assessment repo for CSV upload, Celery processing, observability, and Docker delivery."
 readme = "README.md"
 requires-python = ">=3.12"
+dependencies = [
+    "Django>=5.2,<5.3",
+    "djangorestframework>=3.17,<3.18",
+    "djangorestframework-simplejwt>=5.5,<6",
+    "celery[redis]>=5.6,<5.7",
+    "psycopg[binary]>=3.2,<4",
+]
 
 [project.optional-dependencies]
 dev = [
@@ -18,6 +25,10 @@ dev = [
 
 [tool.setuptools]
 py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["config*", "apps*"]
 
 [tool.black]
 line-length = 88
