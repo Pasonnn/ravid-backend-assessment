@@ -56,10 +56,12 @@ class FoundationSmokeTests(SimpleTestCase):
         self.assertEqual(resolve("/api/login/").view_name, "accounts:login")
         self.assertEqual(resolve("/api/upload-csv/").view_name, "files:upload-csv")
 
-    def test_later_assessment_routes_are_not_registered_yet(self) -> None:
-        for path in [
-            "/api/perform-operation/",
-            "/api/task-status/",
-        ]:
-            with self.assertRaises(Resolver404):
-                resolve(path)
+    def test_processing_route_is_registered(self) -> None:
+        self.assertEqual(
+            resolve("/api/perform-operation/").view_name,
+            "operations:perform-operation",
+        )
+
+    def test_task_status_route_is_not_registered_yet(self) -> None:
+        with self.assertRaises(Resolver404):
+            resolve("/api/task-status/")
