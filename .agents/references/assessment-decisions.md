@@ -65,6 +65,10 @@ These decisions are locked for this repo unless the user explicitly overrides th
   - `gte`
   - `lt`
   - `lte`
+- Filter evaluation semantics:
+  - apply all filter rules with logical `AND`
+  - `contains` is case-sensitive substring matching
+  - `gt`, `gte`, `lt`, and `lte` compare numerically when both operands can be parsed as decimal numbers; otherwise compare as raw strings
 
 Document the supported operators in the feature spec before implementation.
 

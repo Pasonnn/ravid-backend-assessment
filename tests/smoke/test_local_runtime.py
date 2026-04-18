@@ -28,10 +28,10 @@ class LocalRuntimeSmokeTests(SimpleTestCase):
         self.assertEqual(resolve("/api/register/").view_name, "accounts:register")
         self.assertEqual(resolve("/api/login/").view_name, "accounts:login")
         self.assertEqual(resolve("/api/upload-csv/").view_name, "files:upload-csv")
+        self.assertEqual(
+            resolve("/api/perform-operation/").view_name,
+            "operations:perform-operation",
+        )
 
-        for path in [
-            "/api/perform-operation/",
-            "/api/task-status/",
-        ]:
-            with self.assertRaises(Resolver404):
-                resolve(path)
+        with self.assertRaises(Resolver404):
+            resolve("/api/task-status/")

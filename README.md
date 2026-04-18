@@ -19,6 +19,7 @@ The current implemented endpoints are:
 - `POST /api/register/`
 - `POST /api/login/`
 - `POST /api/upload-csv/`
+- `POST /api/perform-operation/`
 
 `POST /api/register/` and `POST /api/login/` accept `application/x-www-form-urlencoded` input.
 
@@ -57,7 +58,22 @@ It returns:
 
 `POST /api/upload-csv/` rejects missing uploads and non-CSV filenames with a `400` error response.
 
-`/api/perform-operation/` and `/api/task-status/` remain unimplemented, and the project default still expects JWT auth for later protected routes.
+`POST /api/perform-operation/` requires:
+
+- `Authorization: Bearer <token>`
+- JSON body fields:
+  - `file_id`
+  - `operation` (`dedup`, `unique`, `filter`)
+- conditional:
+  - `column` is required for `unique`
+  - `filters` is required for `filter` using `[{"field","operator","value"}]`
+
+It returns:
+
+- `message`
+- `task_id`
+
+`/api/task-status/` remains unimplemented in this slice, and the project default still expects JWT auth for later protected routes.
 
 ## Local Bootstrap
 
