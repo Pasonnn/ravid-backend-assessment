@@ -6,18 +6,20 @@ Private R.A.V.I.D. backend assessment repo for CSV upload, Celery processing, ob
 
 - `01-foundation` is implemented.
 - `02-authentication` is implemented.
-- `03-csv-upload` through `07-docker-and-delivery` remain pending.
+- `03-csv-upload` is implemented on the active feature branch.
+- `04-processing-pipeline` through `07-docker-and-delivery` remain pending.
 
-The repository now includes the Django project scaffold, split settings modules, DRF and SimpleJWT baseline configuration, Celery bootstrap wiring, and the reviewer-facing authentication endpoints required by the assessment.
+The repository now includes the Django project scaffold, split settings modules, DRF and SimpleJWT baseline configuration, Celery bootstrap wiring, the reviewer-facing authentication endpoints, and the protected CSV upload endpoint required by the assessment.
 
-## Authentication Endpoints
+## Current API Surface
 
-The current public API surface is:
+The current implemented endpoints are:
 
 - `POST /api/register/`
 - `POST /api/login/`
+- `POST /api/upload-csv/`
 
-Both endpoints accept `application/x-www-form-urlencoded` input.
+`POST /api/register/` and `POST /api/login/` accept `application/x-www-form-urlencoded` input.
 
 `POST /api/register/` requires:
 
@@ -41,7 +43,20 @@ It returns:
 - `access`
 - `refresh`
 
-All later assessment endpoints remain unimplemented, and the project default still expects JWT auth for protected routes.
+`POST /api/upload-csv/` requires:
+
+- `Authorization: Bearer <token>`
+- `multipart/form-data`
+- `file`
+
+It returns:
+
+- `message`
+- `file_id`
+
+`POST /api/upload-csv/` rejects missing uploads and non-CSV filenames with a `400` error response.
+
+`/api/perform-operation/` and `/api/task-status/` remain unimplemented, and the project default still expects JWT auth for later protected routes.
 
 ## Local Bootstrap
 
@@ -57,9 +72,9 @@ Useful validation commands for the current implemented scope:
 ./.venv/bin/python manage.py check
 ./.venv/bin/python manage.py check --settings=config.settings.test
 ./.venv/bin/python manage.py test --settings=config.settings.test
-./.venv/bin/python manage.py test tests.unit.test_authentication_units tests.integration.test_authentication_api tests.smoke.test_foundation --settings=config.settings.test
-./.venv/bin/python -m coverage run --source=apps.accounts,config.urls manage.py test tests.unit.test_authentication_units tests.integration.test_authentication_api tests.smoke.test_foundation --settings=config.settings.test
-./.venv/bin/python -m coverage report --fail-under=95
+./.venv/bin/python manage.py test tests.unit.test_authentication_units tests.integration.test_authentication_api tests.integration.test_csv_upload_api tests.smoke.test_foundation --settings=config.settings.test
+./.venv/bin/python .agents/scripts/validate_agents.py
+./.venv/bin/python .agents/scripts/check_assessment_coverage.py
 ```
 
 ## Settings Modules
