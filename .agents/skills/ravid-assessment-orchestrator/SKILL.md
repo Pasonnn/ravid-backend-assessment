@@ -9,6 +9,20 @@ description: Orchestrate work for the R.A.V.I.D. backend assessment. Use when im
 
 This is the router skill for the assessment. Use it before substantial feature work so the agent does not re-decide the stack, scope, or workflow on every turn.
 
+## Resume Inputs
+
+Before choosing the next task, gather progress in this order:
+
+1. Current branch and `git status --short --branch`
+2. `docs/00-anchor/task.md`
+3. Recent history from `git log --oneline --decorate --max-count=15`
+4. `docs/assessment.md`
+5. `.agents/references/assessment-decisions.md`
+6. Any non-empty docs under `docs/02-features/01-foundation/` through `docs/02-features/07-docker-and-delivery/`
+7. `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md` when the task depends on requirements or terminology
+
+If `docs/00-anchor/task.md` conflicts with branch state or git history, report the mismatch and use repo truth for execution until docs are updated.
+
 ## Required Read Order
 
 1. `docs/assessment.md`
@@ -17,26 +31,28 @@ This is the router skill for the assessment. Use it before substantial feature w
 4. `.agents/MISTAKE.md`
 5. `.agents/references/assessment-validation.md`
 6. `.agents/references/assessment-decisions.md`
-7. `docs/02-features/<current-workstream>/*` if the folder exists
+7. `docs/00-anchor/task.md`
+8. `docs/02-features/<current-workstream>/*` if the folder exists and contains non-empty files
+9. `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md` when the task depends on requirements or terminology
 
 ## Responsibilities
 
 - Identify the current workstream:
-  - foundation
-  - authentication
-  - csv upload
-  - processing pipeline
-  - task status
-  - observability
-  - docker and delivery docs
+  - `01-foundation`
+  - `02-authentication`
+  - `03-csv-upload`
+  - `04-processing-pipeline`
+  - `05-task-status`
+  - `06-observability`
+  - `07-docker-and-delivery`
 - Ensure the current workstream folder exists under `docs/02-features/`:
-  - `foundation/`
-  - `authentication/`
-  - `csv-upload/`
-  - `processing-pipeline/`
-  - `task-status/`
-  - `observability/`
-  - `docker-and-delivery/`
+  - `01-foundation/`
+  - `02-authentication/`
+  - `03-csv-upload/`
+  - `04-processing-pipeline/`
+  - `05-task-status/`
+  - `06-observability/`
+  - `07-docker-and-delivery/`
 - Ensure the standard docs exist or are updated:
   - `spec.md`
   - `plan.md`
@@ -46,6 +62,7 @@ This is the router skill for the assessment. Use it before substantial feature w
   - `pull_request.md`
 - Lock ambiguous decisions into `.agents/references/assessment-decisions.md` before coding.
 - Select the next project-specific skill instead of doing everything in one pass.
+- Map legacy branch aliases such as `feature/foundation-*` to the numbered workstream folders during resume.
 
 ## Decision Rules
 
@@ -58,8 +75,12 @@ This is the router skill for the assessment. Use it before substantial feature w
 
 Return a short orchestration state:
 
+- `Current branch`
+- `Resume sources checked`
 - `Current workstream`
+- `Completed workstreams`
 - `Required docs`
 - `Relevant mistake rules`
+- `Open conflicts`
 - `Selected skill`
 - `Immediate next step`

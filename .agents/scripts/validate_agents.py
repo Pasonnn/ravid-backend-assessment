@@ -41,6 +41,17 @@ REQUIRED_FILES = [
 ]
 
 
+NUMBERED_WORKSTREAMS = [
+    "01-foundation",
+    "02-authentication",
+    "03-csv-upload",
+    "04-processing-pipeline",
+    "05-task-status",
+    "06-observability",
+    "07-docker-and-delivery",
+]
+
+
 def main() -> int:
     missing: list[str] = []
     for rel in REQUIRED_FILES:
@@ -49,7 +60,21 @@ def main() -> int:
 
     checks: list[tuple[str, str, bool]] = []
 
+    root_agents_text = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    repo_agents_text = (ROOT / ".agents/AGENTS.md").read_text(encoding="utf-8")
     workflow_text = (ROOT / ".agents/WORKFLOW.md").read_text(encoding="utf-8")
+    delivery_guidelines_text = (
+        ROOT / ".agents/guidelines/assessment-delivery-guidelines.md"
+    ).read_text(encoding="utf-8")
+    combined_resume_text = "\n".join(
+        [
+            root_agents_text,
+            repo_agents_text,
+            workflow_text,
+            delivery_guidelines_text,
+        ]
+    )
+
     checks.append(
         (
             "workflow references MISTAKE.md",
@@ -69,6 +94,41 @@ def main() -> int:
             "workflow does not reference stale MISTAKES.md filename",
             "MISTAKES.md",
             "MISTAKES.md" not in workflow_text,
+        )
+    )
+    checks.append(
+        (
+            "resume protocol references task anchor",
+            "docs/00-anchor/task.md",
+            "docs/00-anchor/task.md" in combined_resume_text,
+        )
+    )
+    checks.append(
+        (
+            "resume protocol references git log --decorate",
+            "git log --oneline --decorate",
+            "git log --oneline --decorate" in combined_resume_text,
+        )
+    )
+    checks.append(
+        (
+            "resume protocol references numbered workstreams",
+            ", ".join(NUMBERED_WORKSTREAMS),
+            all(name in combined_resume_text for name in NUMBERED_WORKSTREAMS),
+        )
+    )
+    checks.append(
+        (
+            "main exception for agent operating system changes is documented",
+            "AGENTS.md + .agents/** direct-to-main exception",
+            all(
+                marker in combined_resume_text
+                for marker in [
+                    "AGENTS.md",
+                    ".agents/**",
+                    "directly to `main`",
+                ]
+            ),
         )
     )
 

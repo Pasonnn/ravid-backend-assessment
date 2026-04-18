@@ -1,5 +1,15 @@
 # Plan Template
 
+## Progress Snapshot
+
+- Status:
+- Current Branch:
+- Last Updated:
+- Current Step:
+- Next Step:
+- Validation State:
+- PR/Merge State:
+
 ## Outcome
 
 - Target:

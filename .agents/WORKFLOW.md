@@ -2,6 +2,52 @@
 
 Use this workflow for all substantial work in this repository. The goal is fast delivery with explicit decisions, repeatable validation, and a mandatory feedback loop from review findings into `.agents/MISTAKE.md`.
 
+## Phase 0: Session Resume
+
+Run this before planning or coding in every fresh AI session.
+
+1. Check the current branch and `git status --short --branch`.
+2. Read `docs/00-anchor/task.md`.
+3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
+4. Read `docs/assessment.md`.
+5. Read `.agents/references/assessment-decisions.md`.
+6. Inspect any non-empty files under:
+   - `docs/02-features/01-foundation/`
+   - `docs/02-features/02-authentication/`
+   - `docs/02-features/03-csv-upload/`
+   - `docs/02-features/04-processing-pipeline/`
+   - `docs/02-features/05-task-status/`
+   - `docs/02-features/06-observability/`
+   - `docs/02-features/07-docker-and-delivery/`
+7. If the active task depends on requirements or terminology, read:
+   - `docs/00-anchor/brd.md`
+   - `docs/00-anchor/srs.md`
+   - `docs/00-anchor/glossary.md`
+
+Resume rules:
+
+- `docs/00-anchor/task.md` is the intended human snapshot.
+- If `task.md` conflicts with branch state or git history, report the mismatch and use repo truth for execution until the docs are updated.
+- Treat empty files under `docs/02-features/` as missing progress signal and say so explicitly instead of inferring progress.
+- Map legacy workstream aliases when resuming from older branches:
+  - `foundation` -> `01-foundation`
+  - `authentication` -> `02-authentication`
+  - `csv-upload` -> `03-csv-upload`
+  - `processing-pipeline` -> `04-processing-pipeline`
+  - `task-status` -> `05-task-status`
+  - `observability` -> `06-observability`
+  - `docker-and-delivery` -> `07-docker-and-delivery`
+
+Required resume output:
+
+- current branch
+- resume sources checked
+- current workstream
+- completed workstreams
+- latest validated state
+- next intended task
+- open doc/repo conflicts
+
 ## Required Read Order
 
 Before substantial work, read in this order:
@@ -9,21 +55,28 @@ Before substantial work, read in this order:
 1. `.agents/AGENTS.md`
 2. `.agents/WORKFLOW.md`
 3. `.agents/MISTAKE.md`
-4. The relevant skill in `.agents/skills/`
-5. The active workstream docs in `docs/02-features/<workstream>/`
+4. `docs/00-anchor/task.md`
+5. `docs/assessment.md`
+6. `.agents/references/assessment-decisions.md`
+7. The relevant skill in `.agents/skills/`
+8. The active workstream docs in `docs/02-features/<nn-workstream>/`
+9. `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md` when the task depends on requirements or terminology
 
 ## Preflight
 
 Complete this before planning or coding:
 
+- Complete Phase 0 session resume and surface any doc/repo mismatch before continuing.
 - Route the task to the correct repo area.
 - Confirm the current git branch is appropriate for the task.
-- If the task is feature work, create a new branch from the latest `main` before editing.
-- Do not continue feature development on `main`.
+- If the task is feature or product work, create a new branch from the latest `main` before editing.
+- Do not continue feature or product development on `main`.
+- If the task is limited to `AGENTS.md` and `.agents/**`, direct work on `main` is allowed.
 - Run `.agents/skills/agent-self-audit/SKILL.md`.
 - Read `.agents/MISTAKE.md` and note any active rules relevant to the task.
 - Validate that the selected skills, guidelines, templates, and references cover the task.
 - Validate the task against `docs/assessment.md` and `.agents/references/assessment-decisions.md`.
+- If the current workstream docs are empty, state that and fall back to `docs/00-anchor/task.md` plus git history for progress reconstruction.
 - Surface missing constraints, design conflicts, package or app boundary issues, and documentation gaps before implementation.
 - Stop only if a real blocker remains after codebase analysis.
 
@@ -31,10 +84,10 @@ Complete this before planning or coding:
 
 - Clarify scope, dependencies, edge cases, acceptance criteria, and non-goals.
 - Use planning discussion before coding when useful.
-- Create or update the current workstream folder at `docs/02-features/<workstream>/`.
+- Create or update the current workstream folder at `docs/02-features/<nn-workstream>/`.
 - Maintain `spec.md` as the implementation contract for the current workstream.
 - Keep the feature branch name aligned with the current workstream using:
-  - `feature/<workstream>-<short-scope>`
+  - `feature/<nn-workstream>-<short-scope>`
 - Record every non-obvious decision in docs, not only in chat.
 - If the assessment brief is ambiguous, lock the default in `.agents/references/assessment-decisions.md` before implementation proceeds.
 
@@ -98,8 +151,9 @@ Create or update `validation-report.md` in the current workstream folder with co
 - Ensure README, API docs, and assessment-specific docs are current.
 - Run `.agents/scripts/check_assessment_coverage.py`.
 - Run `.agents/scripts/validate_agents.py`.
-- Open a pull request from the feature branch into `main`.
-- Do not merge feature work into `main` without a pull request.
+- Open a pull request from the feature branch into `main` for feature and product work.
+- Do not merge feature or product work into `main` without a pull request.
+- For agent operating system maintenance limited to `AGENTS.md` and `.agents/**`, direct commits to `main` are allowed if the change is isolated from product work.
 - Confirm no open blocker remains.
 
 ## Review To Mistake Loop

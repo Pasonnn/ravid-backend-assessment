@@ -9,6 +9,25 @@ description: Run a pre-execution self-audit before substantial work in repositor
 
 Run this before substantial execution. The goal is to catch guidance gaps, path mismatches, missing workflow artifacts, and task-shaping mistakes early enough to avoid bad implementation work.
 
+## Session Resume
+
+Before the audit, reconstruct repo progress in this order:
+
+1. Check the current branch and `git status --short --branch`.
+2. Read `docs/00-anchor/task.md`.
+3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
+4. Read `docs/assessment.md`.
+5. Read `.agents/references/assessment-decisions.md`.
+6. Inspect any non-empty files under `docs/02-features/01-foundation/` through `docs/02-features/07-docker-and-delivery/`.
+7. If requirements or terminology matter for the task, read `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md`.
+
+Resume rules:
+
+- Treat `docs/00-anchor/task.md` as the intended human snapshot.
+- If `task.md` conflicts with branch state or git history, report the mismatch and use repo truth.
+- Treat empty workstream docs as missing signal and say so explicitly.
+- Map legacy branch aliases such as `feature/foundation-*` to the numbered workstream folders during resume.
+
 ## Repo Path Resolution
 
 Resolve the repo's agent control paths before auditing anything else.
@@ -33,7 +52,8 @@ Check these items in order and keep the output short and concrete.
 - Identify whether the work belongs to app, package, docs, infra, or another repo area.
 - Confirm the expected working area and workflow artifacts.
 - Confirm whether the current git branch is valid for the task.
-- If the task is feature work and the agent is on `main`, report that a feature branch must be created before implementation.
+- If the task is feature or product work and the agent is on `main`, report that a feature branch must be created before implementation.
+- If the task is limited to `AGENTS.md` and `.agents/**`, `main` is valid.
 - If the task is obviously mis-routed, say so before coding.
 
 ### 2. Instruction Coverage
@@ -79,9 +99,14 @@ Only ask the user questions when the issue is genuinely blocking or the tradeoff
 Return a concise audit with these sections when relevant:
 
 - `Task`: what you believe the user wants
+- `Current branch`: branch name and cleanliness
+- `Resume sources checked`: branch status, `task.md`, git history, assessment docs, and non-empty workstream docs
+- `Current workstream`: numbered workstream or `none identified`
+- `Completed workstreams`: list or `no non-empty workstream docs yet`
 - `Routing`: where the work belongs
 - `Coverage`: what instructions/docs/skills cover it
 - `Mistakes`: active mistake rules that are relevant
+- `Open conflicts`: doc/repo mismatches or `none`
 - `Findings`: mismatches, missing artifacts, or risks
 - `Decision`: `proceed`, `proceed_with_risks`, or `blocked`
 - `Next step`: the immediate action you will take

@@ -15,9 +15,12 @@ Read these before substantial work:
 1. `.agents/AGENTS.md`
 2. `.agents/WORKFLOW.md`
 3. `.agents/MISTAKE.md`
-4. Relevant skill in `.agents/skills/`
+4. `docs/00-anchor/task.md`
 5. `docs/assessment.md`
-6. Relevant workstream docs in `docs/02-features/<workstream>/`
+6. `.agents/references/assessment-decisions.md`
+7. Relevant skill in `.agents/skills/`
+8. Relevant workstream docs in `docs/02-features/<nn-workstream>/`
+9. `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md` when the active task depends on requirements or terminology
 
 ## Source Of Truth Order
 
@@ -29,6 +32,52 @@ When guidance conflicts, use this order:
 4. `.agents/WORKFLOW.md`
 5. Relevant `.agents/guidelines/*`
 6. Existing code and docs in the repo
+
+## Session Resume Protocol
+
+Before planning or coding in a fresh AI session, run this resume pass in order:
+
+1. Check the current branch and `git status --short --branch`.
+2. Read `docs/00-anchor/task.md`.
+3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
+4. Read `docs/assessment.md`.
+5. Read `.agents/references/assessment-decisions.md`.
+6. Read any non-empty workstream docs under:
+   - `docs/02-features/01-foundation/`
+   - `docs/02-features/02-authentication/`
+   - `docs/02-features/03-csv-upload/`
+   - `docs/02-features/04-processing-pipeline/`
+   - `docs/02-features/05-task-status/`
+   - `docs/02-features/06-observability/`
+   - `docs/02-features/07-docker-and-delivery/`
+7. If the active task depends on requirements or terminology, read:
+   - `docs/00-anchor/brd.md`
+   - `docs/00-anchor/srs.md`
+   - `docs/00-anchor/glossary.md`
+
+Resume rules:
+
+- `docs/00-anchor/task.md` is the intended human snapshot.
+- If `task.md` conflicts with branch state or git history, report the mismatch and use repo truth for execution until the docs are updated.
+- Treat empty files under `docs/02-features/` as missing progress signal and say so explicitly instead of inferring progress.
+- Map legacy branch aliases to numbered workstreams during resume:
+  - `foundation` -> `01-foundation`
+  - `authentication` -> `02-authentication`
+  - `csv-upload` -> `03-csv-upload`
+  - `processing-pipeline` -> `04-processing-pipeline`
+  - `task-status` -> `05-task-status`
+  - `observability` -> `06-observability`
+  - `docker-and-delivery` -> `07-docker-and-delivery`
+
+Resume output must state:
+
+- current branch
+- resume sources checked
+- current workstream
+- completed workstreams
+- latest validated state
+- next intended task
+- open doc/repo conflicts
 
 ## Locked Stack Defaults
 
@@ -49,13 +98,13 @@ Use these defaults unless the user explicitly overrides them:
 ## Locked Delivery Strategy
 
 - Use one feature workspace per workstream under `docs/02-features/`:
-  - `foundation/`
-  - `authentication/`
-  - `csv-upload/`
-  - `processing-pipeline/`
-  - `task-status/`
-  - `observability/`
-  - `docker-and-delivery/`
+  - `01-foundation/`
+  - `02-authentication/`
+  - `03-csv-upload/`
+  - `04-processing-pipeline/`
+  - `05-task-status/`
+  - `06-observability/`
+  - `07-docker-and-delivery/`
 - Deliver in vertical slices:
   1. project foundation
   2. auth
@@ -68,29 +117,31 @@ Use these defaults unless the user explicitly overrides them:
 
 ## Git Workflow
 
-- `main` is merge-only for feature work.
+- `main` is merge-only for feature and product work.
+- Changes limited to `AGENTS.md` and `.agents/**` may be committed directly to `main` when they are isolated from product changes.
 - Every feature or workstream change must start from a new branch created from the latest `main`.
 - Do not develop feature work directly on `main`.
 - Every feature branch must open a pull request back into `main`.
 - Branch naming format:
-  - `feature/<workstream>-<short-scope>`
+  - `feature/<nn-workstream>-<short-scope>`
 - Branch naming rules:
   - use lowercase letters only
   - use kebab-case for both workstream and scope
   - keep `<short-scope>` concise and implementation-specific
 - Allowed workstream names align with `docs/02-features/`:
-  - `foundation`
-  - `authentication`
-  - `csv-upload`
-  - `processing-pipeline`
-  - `task-status`
-  - `observability`
-  - `docker-and-delivery`
+  - `01-foundation`
+  - `02-authentication`
+  - `03-csv-upload`
+  - `04-processing-pipeline`
+  - `05-task-status`
+  - `06-observability`
+  - `07-docker-and-delivery`
+- Legacy aliases may still appear in existing branches and should be mapped during resume using the rules above.
 - Example branch names:
-  - `feature/foundation-django-bootstrap`
-  - `feature/authentication-register-login`
-  - `feature/csv-upload-file-validation`
-  - `feature/processing-pipeline-celery-dispatch`
+  - `feature/01-foundation-django-bootstrap`
+  - `feature/02-authentication-register-login`
+  - `feature/03-csv-upload-file-validation`
+  - `feature/04-processing-pipeline-celery-dispatch`
 
 ## Locked Assessment Decisions
 
