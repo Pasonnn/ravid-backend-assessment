@@ -1,0 +1,18 @@
+# 02 Authentication Test Matrix
+
+| Area | Scenario | Type | Expected Result | Command Or Evidence |
+| --- | --- | --- | --- | --- |
+| Happy path | Registration succeeds with valid email, password, and `confirm_password` | API integration | `POST /api/register/` returns `200`, `message`, and `user_id`; created user stores normalized email in both `email` and `username` | `./.venv/bin/python manage.py test tests/integration/test_authentication_api.py --settings=config.settings.test` |
+| Happy path | Login succeeds with valid credentials | API integration | `POST /api/login/` returns `200`, `message`, `access`, and `refresh`; both tokens are parseable JWTs for the authenticated user | `./.venv/bin/python manage.py test tests/integration/test_authentication_api.py --settings=config.settings.test` |
+| Validation | Registration rejects missing `confirm_password` | API integration | `400` with `{ "error": "This field is required." }` or equivalent documented message | endpoint test |
+| Validation | Registration rejects mismatched passwords | API integration | `400` with a clear mismatch error | endpoint test |
+| Validation | Registration rejects invalid email format | API integration | `400` with a clear email validation error | endpoint test |
+| Validation | Registration rejects duplicate email case-insensitively | API integration | second registration attempt returns `400` with duplicate-email error | endpoint test |
+| Validation | Login rejects unknown email and wrong password | API integration | `400` with a clear invalid-credentials error and no token payload | endpoint tests |
+| Auth | `register` and `login` remain public despite the project default `IsAuthenticated` permission | Unit / integration | requests succeed without JWT and the views explicitly override permission/authentication behavior as intended | unit assertions plus endpoint tests |
+| Auth | Project default JWT configuration still applies to later protected routes | Smoke / unit | settings still default to JWT auth and `IsAuthenticated` for routes that do not override it | existing foundation smoke tests plus auth unit assertions |
+| Async | Authentication slice introduces no Celery behavior | Regression | auth tests run entirely under `config.settings.test` without queue dependencies | `./.venv/bin/python manage.py test --settings=config.settings.test` |
+| Observability | Auth flow does not log passwords, tokens, or raw credential payloads in implementation code | Review | no credential secrets are written in the accounts views/services | diff review of `apps/accounts/*.py` |
+| Docker | Local auth behavior remains compatible with the env-driven settings and foundation runtime | Smoke | login/register tests pass under the repo’s test settings without Docker-specific overrides leaking in | `./.venv/bin/python manage.py check --settings=config.settings.test` |
+| Regression | Auth feature adds only `/api/register/` and `/api/login/` and does not prematurely introduce later assessment endpoints | Search / smoke | `/api/upload-csv/`, `/api/perform-operation/`, and `/api/task-status/` are still absent after the auth slice | `rg -n "upload-csv|perform-operation|task-status" config apps` |
+| Regression | Auth-related code reaches at least 95% measured coverage | Coverage | coverage report for `apps.accounts` and `config.urls` meets or exceeds 95% | `./.venv/bin/python -m coverage run --source=apps.accounts,config.urls manage.py test --settings=config.settings.test && ./.venv/bin/python -m coverage report --fail-under=95` |
