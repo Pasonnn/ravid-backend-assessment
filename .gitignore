@@ -1,0 +1,43 @@
+.codex
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+.pre-commit-cache/
+
+# Django and runtime artifacts
+db.sqlite3
+db.sqlite3-journal
+local_settings.py
+media/
+staticfiles/
+*.log
+*.pid
+celerybeat-schedule
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Docker local overrides
+docker-compose.override.yml
+
+# Editor and OS files
+.DS_Store
+.vscode/
+.idea/

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=82.0.1"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ravid-backend-assessment"
+version = "0.1.0"
+description = "Private R.A.V.I.D. backend assessment repo for CSV upload, Celery processing, observability, and Docker delivery."
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+    "black==26.3.1",
+    "pre-commit==4.5.1",
+    "commitizen==4.13.10",
+]
+
+[tool.setuptools]
+py-modules = []
+
+[tool.black]
+line-length = 88
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+version_provider = "commitizen"
+update_changelog_on_bump = false
