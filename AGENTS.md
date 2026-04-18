@@ -43,4 +43,5 @@ When asking clarifying questions, always provide options.
 
 - `.agents/` is the operating system for the agents.
 - `docs/02-features/<feature-name>/` is the required location for package workflow artifacts.
+- `main` is merge-only for feature work; each feature must use its own branch and PR back into `main`.
 - Keep code, docs, validation, and PR artifacts in sync.

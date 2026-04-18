@@ -17,6 +17,9 @@ Before substantial work, read in this order:
 Complete this before planning or coding:
 
 - Route the task to the correct repo area.
+- Confirm the current git branch is appropriate for the task.
+- If the task is feature work, create a new branch from the latest `main` before editing.
+- Do not continue feature development on `main`.
 - Run `.agents/skills/agent-self-audit/SKILL.md`.
 - Read `.agents/MISTAKE.md` and note any active rules relevant to the task.
 - Validate that the selected skills, guidelines, templates, and references cover the task.
@@ -30,6 +33,8 @@ Complete this before planning or coding:
 - Use planning discussion before coding when useful.
 - Create or update the current workstream folder at `docs/02-features/<workstream>/`.
 - Maintain `spec.md` as the implementation contract for the current workstream.
+- Keep the feature branch name aligned with the current workstream using:
+  - `feature/<workstream>-<short-scope>`
 - Record every non-obvious decision in docs, not only in chat.
 - If the assessment brief is ambiguous, lock the default in `.agents/references/assessment-decisions.md` before implementation proceeds.
 
@@ -93,6 +98,8 @@ Create or update `validation-report.md` in the current workstream folder with co
 - Ensure README, API docs, and assessment-specific docs are current.
 - Run `.agents/scripts/check_assessment_coverage.py`.
 - Run `.agents/scripts/validate_agents.py`.
+- Open a pull request from the feature branch into `main`.
+- Do not merge feature work into `main` without a pull request.
 - Confirm no open blocker remains.
 
 ## Review To Mistake Loop
