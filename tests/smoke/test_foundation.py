@@ -54,10 +54,10 @@ class FoundationSmokeTests(SimpleTestCase):
     def test_authentication_routes_are_registered(self) -> None:
         self.assertEqual(resolve("/api/register/").view_name, "accounts:register")
         self.assertEqual(resolve("/api/login/").view_name, "accounts:login")
+        self.assertEqual(resolve("/api/upload-csv/").view_name, "files:upload-csv")
 
     def test_later_assessment_routes_are_not_registered_yet(self) -> None:
         for path in [
-            "/api/upload-csv/",
             "/api/perform-operation/",
             "/api/task-status/",
         ]:
