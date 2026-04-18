@@ -109,7 +109,7 @@ The workflow enforces:
 - all `tests.unit`, `tests.integration`, and `tests.smoke` checks under `config.settings.test`
 - Docker Compose config validation
 - application image build from `docker/django/Dockerfile`
-- containerized Django migration, `manage.py check`, and test execution against PostgreSQL and Redis through `compose.ci.yaml`
+- containerized Django migration, `manage.py check`, and local-runtime smoke coverage (`tests.smoke.test_local_runtime`) against PostgreSQL and Redis through `compose.ci.yaml`
 
 Run the same commands locally before pushing:
 
