@@ -6,8 +6,9 @@ Private R.A.V.I.D. backend assessment repo for CSV upload, Celery processing, ob
 
 - `01-foundation` is implemented.
 - `02-authentication` is implemented.
-- `03-csv-upload` is implemented on the active feature branch.
-- `04-processing-pipeline` through `07-docker-and-delivery` remain pending.
+- `03-csv-upload` is implemented.
+- `07-docker-and-delivery` has an active PR-CI feature branch in progress.
+- `04-processing-pipeline` through `06-observability` remain pending.
 
 The repository now includes the Django project scaffold, split settings modules, DRF and SimpleJWT baseline configuration, Celery bootstrap wiring, the reviewer-facing authentication endpoints, and the protected CSV upload endpoint required by the assessment.
 
@@ -75,6 +76,31 @@ Useful validation commands for the current implemented scope:
 ./.venv/bin/python manage.py test tests.unit.test_authentication_units tests.integration.test_authentication_api tests.integration.test_csv_upload_api tests.smoke.test_foundation --settings=config.settings.test
 ./.venv/bin/python .agents/scripts/validate_agents.py
 ./.venv/bin/python .agents/scripts/check_assessment_coverage.py
+```
+
+## PR CI Workflow
+
+The repository now includes a strict pull-request workflow at `.github/workflows/pr-ci.yml`.
+
+It runs on:
+
+- pull requests targeting `main`
+- manual `workflow_dispatch`
+
+The workflow enforces:
+
+- repo validation and formatter checks
+- all `tests.unit`, `tests.integration`, and `tests.smoke` checks under `config.settings.test`
+- Docker Compose config validation
+- application image build from `docker/django/Dockerfile`
+- containerized Django migration, `manage.py check`, and test execution against PostgreSQL and Redis through `compose.ci.yaml`
+
+Run the same commands locally before pushing:
+
+```bash
+./scripts/ci/run_repo_checks.sh
+./scripts/ci/run_python_tests.sh
+./scripts/ci/run_container_validation.sh
 ```
 
 ## Settings Modules
