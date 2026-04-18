@@ -2,13 +2,13 @@
 
 ## Progress Snapshot
 
-- Status: planned
+- Status: implemented
 - Current Branch: `feature/02-authentication-register-login`
 - Last Updated: `2026-04-18`
-- Current Step: authentication contract defined before implementation
-- Next Step: write `plan.md` and `test_matrix.md` for the auth slice, then implement serializers, views, routes, and tests
-- Validation State: not run yet; spec-only change
-- PR/Merge State: in progress on feature branch
+- Current Step: authentication endpoints, tests, and delivery artifacts completed
+- Next Step: open review or continue to `03-csv-upload`
+- Validation State: auth unit, integration, smoke, coverage, and repo validation checks passed
+- PR/Merge State: ready for review on feature branch
 
 ## Goal
 
@@ -101,12 +101,12 @@
 
 ## Acceptance Criteria
 
-- [ ] `POST /api/register/` accepts form-style input and creates a user on valid input
-- [ ] registration rejects missing `confirm_password`, mismatched passwords, duplicate email, and invalid email input with clear errors
-- [ ] `POST /api/login/` accepts form-style input and returns JWT access and refresh tokens on valid credentials
-- [ ] login rejects invalid credentials with a clear error response
-- [ ] `register` and `login` stay public while the project default remains JWT-protected for later routes
-- [ ] the implementation does not introduce a custom swapped user model or undocumented auth behavior
+- [x] `POST /api/register/` accepts form-style input and creates a user on valid input
+- [x] registration rejects missing `confirm_password`, mismatched passwords, duplicate email, and invalid email input with clear errors
+- [x] `POST /api/login/` accepts form-style input and returns JWT access and refresh tokens on valid credentials
+- [x] login rejects invalid credentials with a clear error response
+- [x] `register` and `login` stay public while the project default remains JWT-protected for later routes
+- [x] the implementation does not introduce a custom swapped user model or undocumented auth behavior
 
 ## Locked Decisions
 

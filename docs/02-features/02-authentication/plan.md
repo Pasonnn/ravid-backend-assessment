@@ -2,13 +2,13 @@
 
 ## Progress Snapshot
 
-- Status: planned
+- Status: completed
 - Current Branch: `feature/02-authentication-register-login`
 - Last Updated: `2026-04-18`
-- Current Step: define the implementation sequence for the authentication slice
-- Next Step: implement serializers, services, routes, and tests for registration and login
-- Validation State: not run yet; planning artifact only
-- PR/Merge State: in progress on feature branch
+- Current Step: implementation, validation, and delivery artifacts complete
+- Next Step: review the auth slice or begin `03-csv-upload`
+- Validation State: full auth validation set passed with 100% scoped coverage
+- PR/Merge State: ready for review on feature branch
 
 ## Outcome
 
@@ -28,27 +28,35 @@
      `./.venv/bin/python .agents/scripts/validate_agents.py`
    - Expected artifact:
      current `spec.md`, `plan.md`, and `test_matrix.md` aligned to the authentication slice and a reproducible coverage command for the auth modules
+   - Status:
+     completed
 
 2. Step:
    implement the registration contract with serializer validation, user creation, exact route wiring, and public access override
    - Validation:
-     `./.venv/bin/python manage.py test tests/integration/test_authentication_api.py --settings=config.settings.test`
+     `./.venv/bin/python manage.py test tests.integration.test_authentication_api --settings=config.settings.test`
    - Expected artifact:
      `apps/accounts/serializers.py`, `services.py`, `views.py`, `urls.py`, and `config/urls.py` updated to expose `POST /api/register/`
+   - Status:
+     completed
 
 3. Step:
    implement the login contract with email-based authentication, JWT token issuance, and clear invalid-credential handling
    - Validation:
-     `./.venv/bin/python manage.py test tests/integration/test_authentication_api.py tests/unit/test_authentication_units.py --settings=config.settings.test`
+     `./.venv/bin/python manage.py test tests.integration.test_authentication_api tests.unit.test_authentication_units --settings=config.settings.test`
    - Expected artifact:
      login serializer/service/view behavior returning `message`, `access`, and `refresh` from `POST /api/login/`
+   - Status:
+     completed
 
 4. Step:
    tighten regression coverage, update delivery artifacts, and complete the workflow close-out for this feature
    - Validation:
-     `./.venv/bin/python -m coverage run --source=apps.accounts,config.urls manage.py test --settings=config.settings.test && ./.venv/bin/python -m coverage report --fail-under=95`
+     `./.venv/bin/python -m coverage run --source=apps.accounts,config.urls manage.py test tests.unit.test_authentication_units tests.integration.test_authentication_api tests.smoke.test_foundation --settings=config.settings.test && ./.venv/bin/python -m coverage report --fail-under=95`
    - Expected artifact:
      updated README if public usage changed, `validation-report.md`, `pr-review.md`, and `pull_request.md` with the final evidence and review result
+   - Status:
+     completed
 
 ## Risks
 
