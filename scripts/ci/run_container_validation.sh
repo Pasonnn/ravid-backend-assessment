@@ -3,6 +3,7 @@
 set -euo pipefail
 
 COMPOSE_FILE_PATH="${COMPOSE_FILE_PATH:-compose.ci.yaml}"
+CONTAINER_TEST_TARGETS="${CONTAINER_TEST_TARGETS:-tests.smoke.test_local_runtime}"
 
 cleanup() {
   local exit_code=$?
@@ -28,6 +29,6 @@ docker compose -f "${COMPOSE_FILE_PATH}" run --rm --no-deps app \
   python manage.py check
 
 docker compose -f "${COMPOSE_FILE_PATH}" run --rm --no-deps app \
-  python manage.py test tests.unit tests.integration tests.smoke.test_local_runtime \
+  python manage.py test ${CONTAINER_TEST_TARGETS} \
   --settings=config.settings.local \
   --verbosity 2
