@@ -1,0 +1,17 @@
+.git
+.github
+.venv
+__pycache__/
+*.py[cod]
+.coverage
+.coverage.*
+htmlcov/
+media/
+staticfiles/
+build/
+dist/
+.mypy_cache/
+.pytest_cache/
+ravid_backend_assessment.egg-info/
+.idea/
+.vscode/
