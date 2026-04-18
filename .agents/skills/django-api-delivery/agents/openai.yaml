@@ -1,0 +1,6 @@
+interface:
+  display_name: "Django API Delivery"
+  short_description: "Implement assessment APIs with Django and DRF"
+  default_prompt: "Use $django-api-delivery to implement or review Django and DRF API work for this assessment, including auth, validation, routes, and documented request and response contracts."
+policy:
+  allow_implicit_invocation: true

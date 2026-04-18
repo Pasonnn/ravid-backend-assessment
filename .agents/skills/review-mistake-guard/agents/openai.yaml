@@ -1,0 +1,6 @@
+interface:
+  display_name: "Review Mistake Guard"
+  short_description: "Run mistake-aware reviews with findings-first output"
+  default_prompt: "Use $review-mistake-guard to review changes in this repo by reading MISTAKE.md first, checking for repeated failure patterns, reporting findings before summary, and updating the mistake ledger when a new recurring issue class is found."
+policy:
+  allow_implicit_invocation: true

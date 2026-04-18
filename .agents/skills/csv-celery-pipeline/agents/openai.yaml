@@ -1,0 +1,6 @@
+interface:
+  display_name: "CSV Celery Pipeline"
+  short_description: "Implement CSV ingestion and async processing"
+  default_prompt: "Use $csv-celery-pipeline to implement or review the assessment's CSV upload, background processing, task status, processed file linkage, and operation-specific validation."
+policy:
+  allow_implicit_invocation: true

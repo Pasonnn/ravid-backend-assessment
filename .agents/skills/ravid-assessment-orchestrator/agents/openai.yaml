@@ -1,0 +1,6 @@
+interface:
+  display_name: "RAVID Assessment Orchestrator"
+  short_description: "Route assessment work, docs, and decisions through one workflow"
+  default_prompt: "Use $ravid-assessment-orchestrator to read the assessment, the .agents contract files, the mistake ledger, and the umbrella feature docs, then choose the current workstream, required artifacts, relevant mistake rules, and next project-specific skill."
+policy:
+  allow_implicit_invocation: true
