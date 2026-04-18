@@ -159,6 +159,64 @@ class OperationDispatchApiTests(TestCase):
             },
         )
 
+    def test_dispatch_rejects_non_positive_file_id(self) -> None:
+        _, headers = self.create_user_and_headers("invalid-fileid@example.com")
+        response = self.json_post(
+            "/api/perform-operation/",
+            {
+                "file_id": 0,
+                "operation": "dedup",
+            },
+            **headers,
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {"error": "Ensure this value is greater than or equal to 1."},
+        )
+
+    def test_dispatch_unique_rejects_blank_column(self) -> None:
+        user, headers = self.create_user_and_headers("blank-column@example.com")
+        source_file = self.create_source_file(owner=user)
+        response = self.json_post(
+            "/api/perform-operation/",
+            {
+                "file_id": source_file.pk,
+                "operation": "unique",
+                "column": "",
+            },
+            **headers,
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {"error": "This field may not be blank."})
+
+    def test_dispatch_filter_rejects_unsupported_operator(self) -> None:
+        user, headers = self.create_user_and_headers("bad-operator@example.com")
+        source_file = self.create_source_file(owner=user)
+        response = self.json_post(
+            "/api/perform-operation/",
+            {
+                "file_id": source_file.pk,
+                "operation": "filter",
+                "filters": [
+                    {
+                        "field": "name",
+                        "operator": "starts_with",
+                        "value": "A",
+                    }
+                ],
+            },
+            **headers,
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {"error": '"starts_with" is not a valid choice.'},
+        )
+
     def test_dispatch_requires_authentication(self) -> None:
         response = self.json_post(
             "/api/perform-operation/",
