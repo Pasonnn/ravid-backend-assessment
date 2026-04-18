@@ -41,6 +41,7 @@ Deliver a clean, working backend that satisfies the assessment requirements and 
 - CSV upload API
 - CSV processing API
 - task status API
+- authenticated processed file download endpoint
 - user registration and login
 - JWT-protected routes
 - background task execution using Celery and Redis

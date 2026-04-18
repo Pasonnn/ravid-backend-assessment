@@ -35,6 +35,11 @@ These decisions are locked for this repo unless the user explicitly overrides th
 - Accept form-style input.
 - Return JWT tokens even though the brief only says `Login successful`; document the exact response in the feature spec.
 
+### Success Status Codes
+
+- Use `200 OK` for successful `register`, `login`, `upload-csv`, and `perform-operation` responses.
+- Keep this choice aligned with the assessment examples instead of switching selected endpoints to `201 Created`.
+
 ### Perform Operation
 
 - Endpoint stays `/api/perform-operation/`.
@@ -43,6 +48,7 @@ These decisions are locked for this repo unless the user explicitly overrides th
   - `operation`
   - optional `column`
   - optional `filters`
+- Treat `filter` as required for this submission even though the assessment labels it optional in one section.
 
 ### Filter Payload
 
@@ -51,6 +57,14 @@ These decisions are locked for this repo unless the user explicitly overrides th
   - `field`
   - `operator`
   - `value`
+- Supported operators for v1:
+  - `eq`
+  - `neq`
+  - `contains`
+  - `gt`
+  - `gte`
+  - `lt`
+  - `lte`
 
 Document the supported operators in the feature spec before implementation.
 
@@ -63,6 +77,19 @@ Document the supported operators in the feature spec before implementation.
   - preview data
   - processed file link on success
   - error message on failure
+- Unknown `task_id` returns `404 Not Found`.
+- Internal `STARTED` state maps to public `PENDING`.
+- Query parameter `n` defaults to `100`.
+- Query parameter values above `1000` return a `400 Bad Request` validation error.
+- For the `unique` operation, preview `data` remains an array of row objects; each row contains a single key matching the selected column.
+- Processed output is served through an authenticated app endpoint:
+  - `/api/operations/{task_id}/download/`
+- The download endpoint returns `404 Not Found` when the task is unknown, not owned by the requester, or has not produced an output file yet.
+
+### Ownership And Authorization
+
+- Missing or invalid JWT returns `401 Unauthorized`.
+- Requests for files or operation jobs not owned by the authenticated user return `404 Not Found` to avoid leaking resource existence.
 
 ## Storage And Processing
 

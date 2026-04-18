@@ -36,7 +36,7 @@ The system is a Django-based backend that supports:
 
 - The system shall require a valid JWT token for protected routes.
 - Registration and login shall remain public.
-- CSV upload, operation execution, and task status endpoints shall be protected.
+- CSV upload, operation execution, task status, and processed file download endpoints shall be protected.
 
 ### FR-4 CSV Upload
 
@@ -50,6 +50,7 @@ The system is a Django-based backend that supports:
 - The system shall expose `POST /api/perform-operation/`.
 - The request shall include `file_id` and `operation`.
 - The system shall support `dedup`, `unique`, and `filter`.
+- The submission shall treat `filter` as required even though the assessment marks it optional in one section.
 - `unique` shall require a column input.
 - `filter` shall require documented filter parameters.
 - The endpoint shall queue a background task and return a `task_id`.
@@ -58,23 +59,33 @@ The system is a Django-based backend that supports:
 
 - The system shall expose `GET /api/task-status/`.
 - The request shall accept `task_id` and optional `n`.
+- The request parameter `n` shall default to `100` and shall not exceed `1000`.
+- Requests with `n` above `1000` shall return a validation error.
 - The endpoint shall return `PENDING`, `SUCCESS`, or `FAILURE`.
 - On success, the endpoint shall return preview data and a processed file link.
 - On failure, the endpoint shall return a clear error description.
+- The endpoint shall return `404 Not Found` when the requested task does not exist or does not belong to the authenticated user.
 
 ### FR-7 CSV Processing
 
 - The system shall process heavy CSV operations in Celery.
 - `dedup` shall remove duplicate rows.
 - `unique` shall return unique values or a unique-result CSV output for the selected column.
+- For response consistency, the preview payload for `unique` shall remain an array of row objects, with each row containing a single key for the selected column.
 - `filter` shall return rows matching defined filter conditions.
 
-### FR-8 File Persistence
+### FR-8 Processed File Download
+
+- The system shall expose an authenticated download route for processed outputs.
+- The default route shall be `/api/operations/{task_id}/download/`.
+- The route shall return `404 Not Found` when the task is unknown, not owned by the authenticated user, or has not produced an output file yet.
+
+### FR-9 File Persistence
 
 - The system shall store uploaded and processed files in application-managed file storage.
 - The system shall persist metadata linking files and task execution state.
 
-### FR-9 Structured Observability
+### FR-10 Structured Observability
 
 - Django logs shall be emitted in JSON format.
 - Celery logs shall be emitted in JSON format.
@@ -82,14 +93,14 @@ The system is a Django-based backend that supports:
 - Logs shall be collected and shipped to Loki.
 - Grafana shall expose a dashboard for log inspection.
 
-### FR-10 Dashboard Visibility
+### FR-11 Dashboard Visibility
 
 - The dashboard shall show live logs by service.
 - The solution should support the assessment bonus panels:
   - error log count over the last 30 minutes
   - top 5 slowest CSV operations
 
-### FR-11 Dockerized Delivery
+### FR-12 Dockerized Delivery
 
 - The project shall run via Docker and Docker Compose.
 - The stack shall include:
@@ -100,7 +111,7 @@ The system is a Django-based backend that supports:
   - observability services
 - The README shall provide the commands required to run the stack.
 
-### FR-12 API Documentation
+### FR-13 API Documentation
 
 - The solution shall include API documentation.
 - The documentation tool may be OpenAPI, Bruno, Postman, or another widely used option.
@@ -126,6 +137,8 @@ The system is a Django-based backend that supports:
 
 - Protected routes shall enforce JWT authentication.
 - Secrets and credential payloads shall not be logged.
+- Missing or invalid JWT shall return `401 Unauthorized`.
+- Requests for resources owned by another user should return `404 Not Found` rather than exposing resource existence.
 
 ### NFR-5 Observability
 
@@ -157,13 +170,28 @@ The system is a Django-based backend that supports:
 - Ambiguity: the PDF shows only a success message.
 - Default: return JWT authentication data because protected routes require JWT.
 
+### Success Status Codes
+
+- Ambiguity: the assessment examples show success payloads but do not define whether create-style endpoints should return `200` or `201`.
+- Default: use `200 OK` for successful `register`, `login`, `upload-csv`, and `perform-operation` responses to stay aligned with the assessment examples.
+
 ### Filter Schema
 
 - Ambiguity: the PDF names filtering but does not define a request schema.
 - Default: use a `filters` array with `field`, `operator`, and `value`.
-- Remaining technical design question: finalize the supported operator set before implementation.
+- Default operator set: `eq`, `neq`, `contains`, `gt`, `gte`, `lt`, `lte`.
 
 ### Processed File Storage Strategy
 
 - Ambiguity: the PDF requires a processed file link but does not define storage details.
 - Default: persist processed files in application-managed storage and expose a retrievable link.
+
+### Unknown Task Handling
+
+- Ambiguity: the PDF does not define the response for unknown task identifiers.
+- Default: return `404 Not Found`.
+
+### Ownership Policy
+
+- Ambiguity: the PDF does not define cross-user access behavior for files and task results.
+- Default: enforce ownership and return `404 Not Found` for resources not owned by the requester.

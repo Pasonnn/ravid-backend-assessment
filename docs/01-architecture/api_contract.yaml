@@ -1,0 +1,359 @@
+openapi: 3.1.0
+info:
+  title: R.A.V.I.D. Backend Assessment API
+  version: 0.1.0
+  description: >
+    Architectural API contract draft for the assessment implementation.
+    Successful register, login, upload, and operation-dispatch responses
+    intentionally use 200 OK to stay aligned with the assessment examples.
+servers:
+  - url: http://localhost:8000
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        confirm_password:
+          type: string
+      required: [email, password, confirm_password]
+    RegisterResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        user_id:
+          oneOf:
+            - type: integer
+            - type: string
+      required: [message, user_id]
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        access:
+          type: string
+        refresh:
+          type: string
+      required: [message, access, refresh]
+    UploadCsvResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        file_id:
+          oneOf:
+            - type: integer
+            - type: string
+      required: [message, file_id]
+    FilterCondition:
+      type: object
+      properties:
+        field:
+          type: string
+        operator:
+          type: string
+          enum: [eq, neq, contains, gt, gte, lt, lte]
+        value:
+          oneOf:
+            - type: string
+            - type: number
+            - type: boolean
+      required: [field, operator, value]
+    PerformOperationRequest:
+      type: object
+      properties:
+        file_id:
+          oneOf:
+            - type: integer
+            - type: string
+        operation:
+          type: string
+          enum: [dedup, unique, filter]
+        column:
+          type: string
+          description: >
+            Required when operation is `unique`. Specifies the column to
+            extract unique values from.
+        filters:
+          type: array
+          description: >
+            Required when operation is `filter`. An empty array is rejected.
+          items:
+            $ref: '#/components/schemas/FilterCondition'
+      required: [file_id, operation]
+    PerformOperationResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        task_id:
+          type: string
+      required: [message, task_id]
+    TaskPendingResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+          enum: [PENDING]
+      required: [task_id, status]
+    TaskSuccessResult:
+      type: object
+      properties:
+        data:
+          type: array
+          description: >
+            Preview rows from the processed result. For the `unique` operation,
+            each row contains a single key matching the selected column.
+          items:
+            type: object
+            additionalProperties: true
+        file_link:
+          type: string
+          format: uri
+      required: [data, file_link]
+    TaskSuccessResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+          enum: [SUCCESS]
+        result:
+          $ref: '#/components/schemas/TaskSuccessResult'
+      required: [task_id, status, result]
+    TaskFailureResponse:
+      type: object
+      properties:
+        task_id:
+          type: string
+        status:
+          type: string
+          enum: [FAILURE]
+        error:
+          type: string
+      required: [task_id, status, error]
+paths:
+  /api/register/:
+    post:
+      summary: Register a user
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/login/:
+    post:
+      summary: Log in and obtain JWT credentials
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: Invalid credentials or validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/upload-csv/:
+    post:
+      summary: Upload a CSV file
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+              required: [file]
+      responses:
+        '200':
+          description: File uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadCsvResponse'
+        '400':
+          description: Invalid file request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/perform-operation/:
+    post:
+      summary: Start a CSV processing operation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PerformOperationRequest'
+      responses:
+        '200':
+          description: Operation started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PerformOperationResponse'
+        '400':
+          description: Invalid operation request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Source file not found or not owned by the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/task-status/:
+    get:
+      summary: Get task status and output preview
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: task_id
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: n
+          required: false
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 1000
+      responses:
+        '200':
+          description: Task status response
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/TaskPendingResponse'
+                  - $ref: '#/components/schemas/TaskSuccessResponse'
+                  - $ref: '#/components/schemas/TaskFailureResponse'
+        '400':
+          description: Invalid query parameters such as an out-of-range `n`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Missing or invalid JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Unknown task or task not owned by the authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/operations/{task_id}/download/:
+    get:
+      summary: Download a processed output file
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: task_id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: File download response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Missing or invalid JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: >
+            Task not found, not owned by the authenticated user, or not yet
+            associated with a generated output file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

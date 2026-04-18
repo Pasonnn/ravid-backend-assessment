@@ -60,6 +60,7 @@ Break the assessment into a practical execution order that supports fast deliver
 
 - write Dockerfiles and Docker Compose
 - add healthchecks and startup dependencies
+- add `.env.example`
 - write README run instructions
 - add API documentation
 
@@ -83,6 +84,7 @@ Break the assessment into a practical execution order that supports fast deliver
 - [ ] `unique` works
 - [ ] `filter` works
 - [ ] task status works
+- [ ] processed file download works
 - [ ] structured logs flow into Grafana
 - [ ] Docker Compose runs the stack
 - [ ] README is complete
