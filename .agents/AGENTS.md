@@ -17,7 +17,7 @@ Read these before substantial work:
 3. `.agents/MISTAKE.md`
 4. Relevant skill in `.agents/skills/`
 5. `docs/assessment.md`
-6. `docs/02-features/ravid-backend-assessment/*`
+6. Relevant workstream docs in `docs/02-features/<workstream>/`
 
 ## Source Of Truth Order
 
@@ -48,8 +48,14 @@ Use these defaults unless the user explicitly overrides them:
 
 ## Locked Delivery Strategy
 
-- Use one umbrella feature workspace:
-  - `docs/02-features/ravid-backend-assessment/`
+- Use one feature workspace per workstream under `docs/02-features/`:
+  - `foundation/`
+  - `authentication/`
+  - `csv-upload/`
+  - `processing-pipeline/`
+  - `task-status/`
+  - `observability/`
+  - `docker-and-delivery/`
 - Deliver in vertical slices:
   1. project foundation
   2. auth

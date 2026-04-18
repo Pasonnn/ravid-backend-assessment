@@ -1,6 +1,6 @@
 ---
 name: ravid-assessment-orchestrator
-description: Orchestrate work for the R.A.V.I.D. backend assessment. Use when implementing or planning any part of this project so the agent reads the assessment, the .agents contract files, the mistake ledger, and the umbrella feature docs before choosing the next task, updating workflow artifacts, or locking ambiguous defaults.
+description: Orchestrate work for the R.A.V.I.D. backend assessment. Use when implementing or planning any part of this project so the agent reads the assessment, the .agents contract files, the mistake ledger, and the current workstream feature docs before choosing the next task, updating workflow artifacts, or locking ambiguous defaults.
 ---
 
 # RAVID Assessment Orchestrator
@@ -17,20 +17,26 @@ This is the router skill for the assessment. Use it before substantial feature w
 4. `.agents/MISTAKE.md`
 5. `.agents/references/assessment-validation.md`
 6. `.agents/references/assessment-decisions.md`
-7. `docs/02-features/ravid-backend-assessment/*` if the folder exists
+7. `docs/02-features/<current-workstream>/*` if the folder exists
 
 ## Responsibilities
 
 - Identify the current workstream:
   - foundation
-  - auth
-  - upload
-  - operation pipeline
+  - authentication
+  - csv upload
+  - processing pipeline
   - task status
   - observability
   - docker and delivery docs
-- Ensure the umbrella feature workspace exists:
-  - `docs/02-features/ravid-backend-assessment/`
+- Ensure the current workstream folder exists under `docs/02-features/`:
+  - `foundation/`
+  - `authentication/`
+  - `csv-upload/`
+  - `processing-pipeline/`
+  - `task-status/`
+  - `observability/`
+  - `docker-and-delivery/`
 - Ensure the standard docs exist or are updated:
   - `spec.md`
   - `plan.md`

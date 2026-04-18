@@ -8,7 +8,7 @@ Read these before reviewing:
 
 1. `.agents/MISTAKE.md`
 2. `docs/assessment.md`
-3. Active feature docs in `docs/02-features/ravid-backend-assessment/`
+3. Active workstream docs in the relevant `docs/02-features/<workstream>/` folder
 4. The diff or changed files
 
 ## Review Priorities

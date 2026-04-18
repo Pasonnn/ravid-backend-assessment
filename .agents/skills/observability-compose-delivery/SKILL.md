@@ -15,8 +15,8 @@ Use this skill for logging, dashboarding, container orchestration, and final del
 2. `.agents/guidelines/assessment-delivery-guidelines.md`
 3. `.agents/references/assessment-decisions.md`
 4. `.agents/references/submission-checklist.md`
-5. `docs/02-features/ravid-backend-assessment/spec.md`
-6. `docs/02-features/ravid-backend-assessment/test_matrix.md`
+5. `docs/02-features/<current-workstream>/spec.md`
+6. `docs/02-features/<current-workstream>/test_matrix.md`
 
 ## Scope
 

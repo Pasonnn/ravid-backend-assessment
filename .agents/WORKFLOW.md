@@ -10,7 +10,7 @@ Before substantial work, read in this order:
 2. `.agents/WORKFLOW.md`
 3. `.agents/MISTAKE.md`
 4. The relevant skill in `.agents/skills/`
-5. The active feature docs in `docs/02-features/<feature>/`
+5. The active workstream docs in `docs/02-features/<workstream>/`
 
 ## Preflight
 
@@ -28,15 +28,15 @@ Complete this before planning or coding:
 
 - Clarify scope, dependencies, edge cases, acceptance criteria, and non-goals.
 - Use planning discussion before coding when useful.
-- Create or update the umbrella feature workspace at `docs/02-features/ravid-backend-assessment/`.
-- Maintain `spec.md` as the implementation contract.
+- Create or update the current workstream folder at `docs/02-features/<workstream>/`.
+- Maintain `spec.md` as the implementation contract for the current workstream.
 - Record every non-obvious decision in docs, not only in chat.
 - If the assessment brief is ambiguous, lock the default in `.agents/references/assessment-decisions.md` before implementation proceeds.
 
 ## Phase 2: Plan And Test Matrix
 
-- Create or update `plan.md` with atomic, commit-sized steps.
-- Create or update `test_matrix.md` covering:
+- Create or update `plan.md` in the current workstream folder with atomic, commit-sized steps.
+- Create or update `test_matrix.md` in the current workstream folder covering:
   - happy path
   - validation
   - auth
@@ -63,7 +63,7 @@ Review is mandatory before final submission or merge-like completion.
 - Read `.agents/MISTAKE.md` again before reviewing code.
 - Review the diff against the intended scope, not just for style.
 - Use `.agents/guidelines/code-review-guidelines.md`.
-- Create or update `pr-review.md` with:
+- Create or update `pr-review.md` in the current workstream folder with:
   - findings ordered by severity
   - open questions
   - residual risks
@@ -85,11 +85,11 @@ Run the full validation set before finalization:
 - Docker Compose healthchecks and startup ordering
 - documentation artifact checks
 
-Create or update `validation-report.md` with commands, results, evidence, and unresolved items.
+Create or update `validation-report.md` in the current workstream folder with commands, results, evidence, and unresolved items.
 
 ## Phase 6: Finalization And Submission Prep
 
-- Create or update `pull_request.md` with summary, scope, reviewer instructions, and checklist.
+- Create or update `pull_request.md` in the current workstream folder with summary, scope, reviewer instructions, and checklist.
 - Ensure README, API docs, and assessment-specific docs are current.
 - Run `.agents/scripts/check_assessment_coverage.py`.
 - Run `.agents/scripts/validate_agents.py`.

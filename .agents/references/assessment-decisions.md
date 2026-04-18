@@ -105,6 +105,12 @@ Document the supported operators in the feature spec before implementation.
 
 ## Delivery
 
-- Maintain one umbrella feature workspace:
-  - `docs/02-features/ravid-backend-assessment/`
+- Maintain one feature workspace per workstream under `docs/02-features/`:
+  - `foundation/`
+  - `authentication/`
+  - `csv-upload/`
+  - `processing-pipeline/`
+  - `task-status/`
+  - `observability/`
+  - `docker-and-delivery/`
 - Do not postpone README, API docs, or dashboard provisioning until the end.

@@ -14,8 +14,8 @@ Use this skill for the async CSV workflow, not for generic Django setup.
 1. `.agents/MISTAKE.md`
 2. `.agents/references/assessment-decisions.md`
 3. `docs/assessment.md`
-4. `docs/02-features/ravid-backend-assessment/spec.md`
-5. `docs/02-features/ravid-backend-assessment/test_matrix.md`
+4. `docs/02-features/<current-workstream>/spec.md`
+5. `docs/02-features/<current-workstream>/test_matrix.md`
 
 ## Scope
 

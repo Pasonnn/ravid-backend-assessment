@@ -14,8 +14,8 @@ Use this skill for Django and DRF implementation work in the assessment.
 1. `.agents/MISTAKE.md`
 2. `.agents/guidelines/ai-programming-guidelines.md`
 3. `.agents/references/assessment-decisions.md`
-4. `docs/02-features/ravid-backend-assessment/spec.md`
-5. `docs/02-features/ravid-backend-assessment/test_matrix.md`
+4. `docs/02-features/<current-workstream>/spec.md`
+5. `docs/02-features/<current-workstream>/test_matrix.md`
 
 ## Scope
 
