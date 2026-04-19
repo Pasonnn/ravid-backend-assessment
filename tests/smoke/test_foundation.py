@@ -2,7 +2,7 @@ from importlib import import_module, reload
 
 from django.conf import settings
 from django.test import SimpleTestCase
-from django.urls import Resolver404, resolve
+from django.urls import resolve
 
 
 class FoundationSmokeTests(SimpleTestCase):
@@ -62,6 +62,11 @@ class FoundationSmokeTests(SimpleTestCase):
             "operations:perform-operation",
         )
 
-    def test_task_status_route_is_not_registered_yet(self) -> None:
-        with self.assertRaises(Resolver404):
-            resolve("/api/task-status/")
+    def test_task_status_and_download_routes_are_registered(self) -> None:
+        self.assertEqual(
+            resolve("/api/task-status/").view_name, "operations:task-status"
+        )
+        self.assertEqual(
+            resolve("/api/operations/task-1/download/").view_name,
+            "operations:operation-download",
+        )

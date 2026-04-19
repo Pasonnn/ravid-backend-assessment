@@ -117,6 +117,9 @@ components:
       required: [message, task_id]
     TaskPendingResponse:
       type: object
+      description: >
+        Pending response returned for internal job states `PENDING` and
+        `STARTED`.
       properties:
         task_id:
           type: string
@@ -138,6 +141,9 @@ components:
         file_link:
           type: string
           format: uri
+          description: >
+            Absolute authenticated download URL for
+            `/api/operations/{task_id}/download/`.
       required: [data, file_link]
     TaskSuccessResponse:
       type: object
@@ -298,7 +304,9 @@ paths:
             maximum: 1000
       responses:
         '200':
-          description: Task status response
+          description: >
+            Task status response. Internal `STARTED` is normalized to public
+            `PENDING`.
           content:
             application/json:
               schema:

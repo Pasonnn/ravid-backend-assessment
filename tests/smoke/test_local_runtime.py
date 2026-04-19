@@ -3,7 +3,7 @@ from unittest import skipUnless
 
 from django.conf import settings
 from django.test import SimpleTestCase
-from django.urls import Resolver404, resolve
+from django.urls import resolve
 
 
 @skipUnless(
@@ -32,6 +32,10 @@ class LocalRuntimeSmokeTests(SimpleTestCase):
             resolve("/api/perform-operation/").view_name,
             "operations:perform-operation",
         )
-
-        with self.assertRaises(Resolver404):
-            resolve("/api/task-status/")
+        self.assertEqual(
+            resolve("/api/task-status/").view_name, "operations:task-status"
+        )
+        self.assertEqual(
+            resolve("/api/operations/task-1/download/").view_name,
+            "operations:operation-download",
+        )

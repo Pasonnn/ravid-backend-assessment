@@ -63,3 +63,14 @@ class PerformOperationRequestSerializer(serializers.Serializer):
                 return attrs
 
         return attrs
+
+
+class TaskStatusQuerySerializer(serializers.Serializer):
+    task_id = serializers.CharField(max_length=255, allow_blank=False)
+    n = serializers.IntegerField(
+        required=False, min_value=1, max_value=1000, default=100
+    )
+
+
+class OperationTaskPathSerializer(serializers.Serializer):
+    task_id = serializers.CharField(max_length=255, allow_blank=False)
