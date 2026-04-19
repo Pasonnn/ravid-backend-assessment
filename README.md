@@ -1,139 +1,158 @@
 # R.A.V.I.D. Backend Assessment
 
-Private R.A.V.I.D. backend assessment repository for CSV upload, Celery processing, task-status retrieval, structured observability, and Docker delivery.
+Backend assessment delivery for CSV upload, async CSV processing, task status/download, structured observability, and Dockerized runtime.
 
-## Delivery Status
+## Implemented API Surface
 
-- `01-foundation`: completed
-- `02-authentication`: completed
-- `03-csv-upload`: completed
-- `04-processing-pipeline`: completed
-- `05-task-status`: completed
-- `06-observability`: completed
-- `07-docker-and-delivery`: in progress on `feature/07-docker-and-delivery-runtime-hardening`
+- `POST /api/register/` (public)
+- `POST /api/login/` (public)
+- `POST /api/upload-csv/` (JWT)
+- `POST /api/perform-operation/` (JWT)
+- `GET /api/task-status/?task_id=<task_id>&n=<optional>` (JWT)
+- `GET /api/operations/{task_id}/download/` (JWT)
 
-## Current API Surface
+Canonical docs keep trailing slashes. Runtime also accepts slashless aliases.
 
-Implemented endpoints:
-
-- `POST /api/register/`
-- `POST /api/login/`
-- `POST /api/upload-csv/`
-- `POST /api/perform-operation/`
-- `GET /api/task-status/?task_id=<task_id>&n=<optional>`
-- `GET /api/operations/{task_id}/download/`
-
-Routing compatibility:
-
-- Canonical API contract keeps trailing-slash routes (for example `/api/register/`).
-- Slashless aliases are also accepted (for example `/api/register`) to prevent POST redirect/runtime errors when clients omit the trailing slash.
-
-Auth behavior:
-
-- `register` and `login` are public.
-- All other routes require `Authorization: Bearer <token>`.
-- Ownership-protected resources return `404` for unknown/foreign IDs.
-
-## Local Bootstrap
-
-Install dependencies into the existing virtual environment:
+## 1) Clone And Setup
 
 ```bash
-uv pip install --python ./.venv/bin/python -e '.[dev]'
+git clone git@github.com:Pasonnn/ravid-backend-assessment.git
+cd interview-project
+cp .env.example .env
 ```
 
-Useful lightweight commands:
+Required tools:
 
-```bash
-./.venv/bin/python manage.py check
-./.venv/bin/python manage.py check --settings=config.settings.test
-./scripts/ci/run_repo_checks.sh
-```
+- Docker + Docker Compose plugin
+- `uv` (optional, only for non-Docker local/test workflow)
+- `jq` (optional, for shell-based API smoke flow)
 
-## PR CI Workflow
+## 2) Run With Docker (Recommended Reviewer Path)
 
-Workflow: `.github/workflows/pr-ci.yml`
-
-Runs on:
-
-- pull requests targeting `main`
-- `workflow_dispatch`
-
-Required jobs:
-
-- `Repo Checks`
-- `Python Tests (unit)`
-- `Python Tests (integration)`
-- `Python Tests (smoke)`
-- `Container Validation`
-
-The Python test suite is sharded by scope through `scripts/ci/run_python_tests.sh` using `TEST_SCOPE`.
-
-## Runtime Stack (Observability + App)
-
-Use `.env.example` as the baseline environment file.
-
-Bring up the full runtime stack:
+Start full stack:
 
 ```bash
 docker compose up --build -d
 ```
 
-Services in `compose.yaml`:
+Verify services:
 
-- `web` (Django API)
-- `worker` (Celery worker)
-- `db` (PostgreSQL)
-- `redis`
-- `alloy` (log collection)
-- `loki` (log storage)
-- `grafana` (dashboard)
+```bash
+docker compose ps -a
+```
 
-Runtime startup behavior:
+Expected running services:
 
-- `web` applies migrations before serving requests.
-- `worker` starts Celery directly (no concurrent migration run).
+- `web`, `worker`, `db`, `redis`, `alloy`, `loki`, `grafana`
 
-Access points:
+Entry points:
 
 - API: `http://localhost:8000`
-- Grafana: `http://localhost:3000` (defaults from `.env.example`)
-- PostgreSQL: `localhost:5432`
-- Redis: `localhost:6379`
-- Loki API: `http://localhost:3100`
-- Alloy UI: `http://localhost:12345`
+- Grafana: `http://localhost:3000`
 
-All non-web/Grafana infra ports are published on `127.0.0.1` only.
-
-Tear down:
+Stop stack:
 
 ```bash
 docker compose down -v
 ```
 
-## Reviewer Note (PENDING Reproduction)
+## 3) API Documentation Collection
 
-If you need to deterministically observe `PENDING` for `task-status`, use [docs/02-features/05-task-status/pending-repro-note.md](/home/pason/Works/ravid/interview-project/docs/02-features/05-task-status/pending-repro-note.md). It uses a reviewer-only worker delay toggle that is disabled by default.
+- OpenAPI contract: [`docs/01-architecture/api_contract.yaml`](docs/01-architecture/api_contract.yaml)
+- Postman collection: [`docs/api/ravid-assessment.postman_collection.json`](docs/api/ravid-assessment.postman_collection.json)
+- Collection usage notes: [`docs/api/README.md`](docs/api/README.md)
 
-## Observability
+Recommended reviewer flow: import the Postman collection and run requests in numbered order.
 
-- Django and Celery logs are emitted as JSON to stdout.
-- Alloy scrapes container logs and forwards to Loki.
-- Grafana datasource and dashboard provisioning are version-controlled under `docker/grafana/provisioning/`.
-- Dashboard file: `docker/grafana/dashboards/observability-overview.json`.
+## 4) Quick API Smoke Flow (curl)
 
-Dashboard includes:
+1. Register:
 
-- live logs stream filterable by service (`django`, `celery`)
-- error log count in the last 30 minutes
-- top 5 slowest CSV operations from `duration_ms`
+```bash
+curl -sS -X POST http://localhost:8000/api/register/ \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'email=reviewer@example.com' \
+  --data-urlencode 'password=Sup3rSecret!' \
+  --data-urlencode 'confirm_password=Sup3rSecret!'
+```
 
-## Environment Variables
+2. Login and capture token:
 
-See `.env.example` for required runtime variables, including:
+```bash
+ACCESS_TOKEN=$(curl -sS -X POST http://localhost:8000/api/login/ \
+  -H 'Content-Type: application/x-www-form-urlencoded' \
+  --data-urlencode 'email=reviewer@example.com' \
+  --data-urlencode 'password=Sup3rSecret!' | jq -r '.access')
+```
 
-- Django runtime values (`DJANGO_*`)
-- PostgreSQL connection values (`POSTGRES_*`)
-- Redis/Celery values (`REDIS_URL`, `CELERY_*`)
-- Optional reviewer-only task delay toggle (`OPERATION_DEBUG_DELAY_PER_ROW_MS`)
-- Grafana admin credentials (`GF_SECURITY_ADMIN_*`)
+3. Upload CSV:
+
+```bash
+FILE_ID=$(curl -sS -X POST http://localhost:8000/api/upload-csv/ \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  -F 'file=@tests/fixtures/csv/basic_users.csv' | jq -r '.file_id')
+```
+
+4. Dispatch operation:
+
+```bash
+TASK_ID=$(curl -sS -X POST http://localhost:8000/api/perform-operation/ \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  -H 'Content-Type: application/json' \
+  -d "{\"file_id\": ${FILE_ID}, \"operation\": \"dedup\"}" | jq -r '.task_id')
+```
+
+5. Check status:
+
+```bash
+curl -sS "http://localhost:8000/api/task-status/?task_id=${TASK_ID}&n=20" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" | jq
+```
+
+6. Download processed output:
+
+```bash
+curl -sS -L "http://localhost:8000/api/operations/${TASK_ID}/download/" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}" \
+  -o processed.csv
+```
+
+## 5) Validation And Tests
+
+Repo checks:
+
+```bash
+./scripts/ci/run_repo_checks.sh
+```
+
+Python tests by shard:
+
+```bash
+TEST_SCOPE=unit ./scripts/ci/run_python_tests.sh
+TEST_SCOPE=integration ./scripts/ci/run_python_tests.sh
+TEST_SCOPE=smoke ./scripts/ci/run_python_tests.sh
+```
+
+Single-command full Python suite:
+
+```bash
+./scripts/ci/run_python_tests.sh
+```
+
+## 6) Observability Verification
+
+1. Open Grafana at `http://localhost:3000`.
+2. Sign in with `GF_SECURITY_ADMIN_USER` / `GF_SECURITY_ADMIN_PASSWORD` from `.env`.
+3. Open dashboard: `RAVID Observability Overview`.
+4. Confirm panels update after API calls:
+   - live logs by service (`django`, `celery`)
+   - error log count (last 30 minutes)
+   - top 5 slowest CSV operations
+
+## 7) Reviewer Notes
+
+- Unknown or foreign `file_id` / `task_id` on protected resources returns `404` by design.
+- `GET /api/task-status/` defaults `n=100`; `n > 1000` returns `400`.
+- Optional reviewer-only task delay toggle:
+  - `OPERATION_DEBUG_DELAY_PER_ROW_MS=0` (default)
+  - Set temporarily to `1` for deterministic `PENDING` observation as documented in [`docs/02-features/05-task-status/pending-repro-note.md`](docs/02-features/05-task-status/pending-repro-note.md).

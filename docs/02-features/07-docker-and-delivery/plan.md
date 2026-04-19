@@ -3,77 +3,71 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Current Branch: `feature/07-docker-and-delivery-api-docs-reviewer-guide`
 - Last Updated: `2026-04-19`
-- Current Step: runtime hardening implementation and validation complete
+- Current Step: delivery docs + API collection patch completed
 - Next Step: push branch and open PR
-- Validation State: lightweight local checks passed; CI to re-validate full suite
-- PR/Merge State: ready for review on feature branch
+- Validation State: repo checks + targeted API integration tests passing locally
+- PR/Merge State: ready for review
 
 ## Outcome
 
-- Target: stabilize runtime compose behavior and slash-handling ergonomics without expanding product scope
+- Target: close assessment blocker for missing API documentation collection and improve reviewer onboarding docs
 - Dependencies:
   - `docs/02-features/07-docker-and-delivery/spec.md`
   - `docs/assessment.md`
   - `.agents/references/assessment-decisions.md`
-  - `compose.yaml`
-  - `docker/loki/config.yaml`
+  - `README.md`
+  - `docs/01-architecture/api_contract.yaml`
 
 ## Steps
 
 1. Step:
-   capture current runtime failures with direct evidence from compose state and endpoint probes
+   audit repository truth against delivery docs and identify missing reviewer artifacts
    - Validation:
-     `docker compose ps -a && docker compose logs loki worker web`
+     `git status --short --branch`
+     `git log --oneline --decorate --max-count=15`
    - Expected artifact:
-     reproducible failure context for Loki TSDB config, worker migration race, and slashless POST runtime error
+     explicit mismatch list and scoped docs patch plan
    - Status:
      completed
 
 2. Step:
-   apply runtime hardening fixes in compose and routing while preserving canonical API contract
+   add committed API collection artifact and usage notes under a reviewer-visible docs path
    - Validation:
-     `docker compose -f compose.yaml config --quiet`
+     `jq empty docs/api/ravid-assessment.postman_collection.json`
    - Expected artifact:
-     updated `compose.yaml`, `docker/loki/config.yaml`, and API URL modules with optional-trailing-slash route aliases
+     Postman collection plus `docs/api/README.md`
    - Status:
      completed
 
 3. Step:
-   run strict lightweight validation and capture evidence (no local heavy tests)
+   rewrite `README.md` to provide clear clone/run/test guidance for reviewers
    - Validation:
-     `./scripts/ci/run_repo_checks.sh`
-     `docker compose down -v --remove-orphans && docker compose up --build -d`
-     `docker compose ps -a`
-     `curl` probes for slash and slashless endpoints
+     manual command/path review + `git diff --check`
    - Expected artifact:
-     green runtime checks and concrete evidence lines for service health + endpoint behavior
+     updated README with Docker-first quickstart, API flow, and validation commands
    - Status:
      completed
 
 4. Step:
-   align README and 07 closeout artifacts with implemented hardening behavior
+   align anchor/workstream artifacts with current repo truth, include dashboard panel-tuning update, and capture validation evidence
    - Validation:
-     doc review + `git diff --check`
+     `./scripts/ci/run_repo_checks.sh`
+     `./.venv/bin/python manage.py test tests.integration.test_authentication_api tests.integration.test_csv_upload_api tests.integration.test_operation_dispatch_api tests.integration.test_task_status_api tests.integration.test_operation_download_api --settings=config.settings.test`
    - Expected artifact:
-     updated `README.md`, `spec.md`, `plan.md`, `test_matrix.md`, `validation-report.md`, `pr-review.md`, and `pull_request.md`
+     updated `task.md`, `spec.md`, `plan.md`, `test_matrix.md`, `validation-report.md`, `pr-review.md`, and `pull_request.md`
    - Status:
      completed
 
 ## Risks
 
 - Risk:
-  slashless aliases unintentionally alter canonical documented API contract
+  API collection and OpenAPI contract can drift over time
 - Mitigation:
-  keep canonical slash routes documented; treat slashless as compatibility aliases only
+  keep both paths linked from README and validate endpoint coverage during review
 
 - Risk:
-  runtime passes locally but drifts in CI
+  docs patch could accidentally claim behavior not covered by tests
 - Mitigation:
-  keep CI workflow unchanged and require PR checks to pass before merge
-
-- Risk:
-  local heavy test execution destabilizes developer machine
-- Mitigation:
-  intentionally skip local heavy tests in this pass; use CI as full-suite gate
+  validate against integration tests and existing endpoint contracts before finalization

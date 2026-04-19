@@ -3,71 +3,74 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Current Branch: `feature/07-docker-and-delivery-api-docs-reviewer-guide`
 - Last Updated: `2026-04-19`
-- Current Step: runtime hardening for local delivery completed
-- Next Step: open PR to `main`
-- Validation State: strict lightweight local validation passed; CI remains authoritative for full test suite
-- PR/Merge State: ready for review on feature branch
+- Current Step: API documentation collection and reviewer guidance refresh completed
+- Next Step: push branch and open PR to `main`
+- Validation State: lightweight checks and targeted endpoint suite passing locally
+- PR/Merge State: ready for review
 
 ## Goal
 
 - Feature: `07-docker-and-delivery`
-- Why it exists: finalize runtime reliability and delivery ergonomics after CI pipeline implementation
-- What success looks like: local runtime stack boots cleanly (`web`, `worker`, `db`, `redis`, `alloy`, `loki`, `grafana`), API calls work with canonical and slashless paths, and delivery artifacts match real behavior
+- Why it exists: ensure assessment delivery is reviewer-friendly and explicitly includes a committed API documentation collection
+- What success looks like: repository includes a usable API collection artifact, README provides clone-run-test guidance, and workstream docs match repo truth
 
 ## Contracts
 
-### Runtime Compose Contract
+### Delivery Documentation Contract
 
-- File: `compose.yaml`
-- `web` remains the migration owner at startup.
-- `worker` starts Celery directly and does not run migrations.
-- Loki config must be valid for Loki `3.x` TSDB mode and boot without config validation failure.
+- README must provide a reviewer-first path for:
+  - clone/setup
+  - runtime startup (`docker compose`)
+  - API execution order
+  - validation/test commands
+  - observability verification
+- Guidance must reference concrete repo paths and executable commands.
 
-### API Route Compatibility Contract
+### API Documentation Collection Contract
 
-- Canonical public API contract remains slash-based endpoints from `docs/01-architecture/api_contract.yaml`.
-- Slashless aliases are accepted for the same endpoints to prevent `APPEND_SLASH` POST runtime errors when clients omit trailing slashes.
-- Auth and response contracts remain unchanged.
+- API docs must include at least one committed collection format accepted by the assessment.
+- This workstream delivers:
+  - OpenAPI contract at `docs/01-architecture/api_contract.yaml`
+  - Postman collection at `docs/api/ravid-assessment.postman_collection.json`
+  - usage notes at `docs/api/README.md`
+- Collection must cover all required assessment endpoints and JWT-protected flow.
 
-### CI/Validation Contract
+### Repo-Truth Alignment Contract
 
-- Existing PR CI gates remain unchanged:
-  - `Repo Checks`
-  - `Python Tests (unit|integration|smoke)`
-  - `Container Validation`
-- Local heavy `manage.py test` execution is intentionally skipped in this pass due host RAM constraints.
+- Anchor snapshot docs must not contradict merged implementation state.
+- `docs/00-anchor/task.md` acceptance checklist is updated to match implemented capabilities.
 
 ## Data Model
 
 - No model or migration changes.
-- Scope is runtime delivery hardening and route ergonomics only.
+- Scope is documentation and delivery artifact updates only.
 
 ## Async And Storage Behavior
 
-- Celery runtime behavior unchanged except worker startup no longer competes on migrations.
-- File persistence and task processing contracts are unchanged.
+- No runtime behavior change.
+- Existing Celery, storage, and endpoint contracts remain unchanged.
 
 ## Observability
 
-- Grafana Alloy + Loki + Grafana stack remains version-controlled and runtime-bootable.
-- Loki config is updated to a valid single-node filesystem TSDB profile for current Loki image.
+- No collector/runtime topology changes are introduced.
+- README guidance clarifies reviewer verification flow for Grafana dashboard panels.
+- Dashboard table presentation is tuned to label and sort slow-operation duration as `Max Duration (ms)`.
 
 ## Acceptance Criteria
 
-- [x] `compose.yaml` starts with healthy `db`/`redis` and running `web`/`worker`/`loki`/`alloy`/`grafana`
-- [x] Loki no longer exits with TSDB config validation errors
-- [x] Worker no longer exits on migration-race schema errors
-- [x] `POST /api/register` and `POST /api/register/` both succeed
-- [x] Auth-protected endpoints keep expected `401` behavior for anonymous requests on slash and slashless variants
-- [x] Workstream docs and README reflect the hardening pass
+- [x] API documentation collection is committed in a reviewer-usable format
+- [x] README is updated for clone, run, and test clarity
+- [x] API docs paths are discoverable from README
+- [x] `docs/00-anchor/task.md` checklist matches repo truth
+- [x] No endpoint/runtime regression introduced by documentation changes
 
 ## Locked Decisions
 
-- Keep canonical API docs slash-based; add slashless route aliases for runtime client resilience.
-- Keep CI scripts and workflow structure unchanged in this pass.
-- Use CI as the full-suite authority; skip local heavy tests on RAM-constrained machine.
+- Keep OpenAPI as canonical contract file under `docs/01-architecture/api_contract.yaml`.
+- Add Postman collection as the explicit assessment collection deliverable.
+- Keep canonical slash endpoint documentation while noting slashless runtime compatibility.
 
 ## Open Questions
 

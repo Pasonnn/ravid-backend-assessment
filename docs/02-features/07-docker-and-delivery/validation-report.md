@@ -3,39 +3,32 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Current Branch: `feature/07-docker-and-delivery-api-docs-reviewer-guide`
 - Last Updated: `2026-04-19`
-- Current Step: runtime hardening validated locally with lightweight checks
-- Next Step: push branch and confirm PR CI
-- Validation State: local lightweight checks passed; full suite delegated to CI
-- PR/Merge State: ready for review on feature branch
+- Current Step: documentation collection and reviewer guidance patch validated
+- Next Step: push branch and open PR
+- Validation State: local checks passed for this patch scope
+- PR/Merge State: ready for review
 
 ## Summary
 
-- Scope: runtime stability hardening for compose stack + slashless API compatibility aliases
+- Scope: API documentation collection deliverable + reviewer documentation refresh + dashboard max-duration panel tuning
 - Date: `2026-04-19`
-- Constraint: local heavy tests intentionally not executed due RAM limits
 
 ## Results
 
 | Command | Purpose | Result | Evidence |
 | --- | --- | --- | --- |
-| `./scripts/ci/run_repo_checks.sh` | Verify formatter, agent/docs checks, Django check, and compose/config observability file checks | passed | `57 files would be left unchanged.`, `Agent structure is valid.`, `Assessment coverage markers are present.`, `System check identified no issues (0 silenced).` |
-| `docker compose down -v --remove-orphans && docker compose up --build -d` | Rebuild and cold-start full runtime stack | passed | services created and started without compose failure |
-| `docker compose ps -a` | Validate service runtime status | passed | `loki` `Up`, `worker` `Up`, `web` `Up`, infra healthy |
-| `docker compose logs --no-color --tail=120 loki` | Validate Loki boot with updated config | passed | `Starting Loki`, `Loki started`; no TSDB config validation error |
-| `docker compose logs --no-color --tail=120 worker` | Validate worker startup behavior | passed | Celery worker banner shown, queue/task registration visible, no migration schema race crash |
-| `curl -X POST http://localhost:8000/api/register ...` | Slashless register compatibility | passed | `HTTP:200` with `{"message":"Registration successful", ...}` |
-| `curl -X POST http://localhost:8000/api/register/ ...` | Canonical register route regression check | passed | `HTTP:200` with registration payload |
-| `curl http://localhost:8000/api/task-status?task_id=dummy` | Slashless protected-route auth behavior | passed | `HTTP:401` with auth-required detail |
-| `curl http://localhost:8000/api/task-status/?task_id=dummy` | Canonical protected-route auth behavior | passed | `HTTP:401` with auth-required detail |
+| `jq empty docs/api/ravid-assessment.postman_collection.json` | Validate Postman collection JSON syntax | passed | `postman-json-ok` |
+| `./scripts/ci/run_repo_checks.sh` | Validate repo checks gate after docs/dashboard changes | passed | `58 files would be left unchanged.`, `Agent structure is valid.`, `Assessment coverage markers are present.`, `System check identified no issues (0 silenced).` |
+| `./.venv/bin/python manage.py test tests.unit.test_observability_dashboard_units tests.integration.test_authentication_api tests.integration.test_csv_upload_api tests.integration.test_operation_dispatch_api tests.integration.test_task_status_api tests.integration.test_operation_download_api --settings=config.settings.test` | Guard dashboard and endpoint contract regressions | passed | `Ran 50 tests ... OK` |
+| `git diff --check` | Validate patch formatting hygiene | passed | no output |
 
 ## Failures Or Gaps
 
-- No runtime failures remain from the reported issues (`loki` and `worker` exits, slashless POST runtime error).
-- Local heavy test execution was intentionally skipped due host RAM constraints.
+- None.
 
 ## Follow-Up
 
 - Push branch and open PR to `main`.
-- Use PR CI results as authoritative full-suite validation evidence before merge.
+- Use PR CI as final merge gate.

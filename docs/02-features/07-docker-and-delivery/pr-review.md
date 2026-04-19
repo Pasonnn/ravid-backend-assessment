@@ -15,8 +15,8 @@
 
 ## Residual Risks
 
-- Full test-suite confidence depends on PR CI because local heavy tests were intentionally skipped for RAM safety.
+- API collection and OpenAPI contract can drift if later endpoint changes are not reflected in both artifacts.
 
 ## Recommendation
 
-- Approve after CI is green.
+- Approve.

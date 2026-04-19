@@ -2,17 +2,16 @@
 
 | Area | Scenario | Type | Expected Result | Command Or Evidence |
 | --- | --- | --- | --- | --- |
-| Validation | Repo-level checks remain green after hardening changes | Local CI script | formatter/agent checks/Django check and compose-parse checks pass | `./scripts/ci/run_repo_checks.sh` |
-| Docker | Runtime compose parses successfully | Compose validation | `compose.yaml` is syntactically valid | `docker compose -f compose.yaml config --quiet` |
-| Docker | Loki starts and stays running | Runtime smoke | `loki` service status is `Up` and no TSDB-config crash occurs | `docker compose ps -a` + `docker compose logs loki` |
-| Async | Worker starts Celery without migration-race crash | Runtime smoke | `worker` service status is `Up` and Celery startup banner appears | `docker compose ps -a` + `docker compose logs worker` |
-| API | Slashless register POST works | API smoke | `POST /api/register` returns `200` with registration response | `curl -X POST http://localhost:8000/api/register ...` |
-| API | Canonical slash register POST still works | API smoke | `POST /api/register/` returns `200` | `curl -X POST http://localhost:8000/api/register/ ...` |
-| Auth | Protected endpoint auth guard unchanged on slashless path | API smoke | anonymous `GET /api/task-status?task_id=...` returns `401` | `curl http://localhost:8000/api/task-status?task_id=dummy` |
-| Auth | Protected endpoint auth guard unchanged on canonical path | API smoke | anonymous `GET /api/task-status/?task_id=...` returns `401` | `curl http://localhost:8000/api/task-status/?task_id=dummy` |
-| Regression | CI full suite remains sharded and unchanged | Workflow review | PR CI still runs `unit`, `integration`, and `smoke` shards plus container validation | `.github/workflows/pr-ci.yml` |
+| Delivery docs | README provides clone, run, and test steps with concrete commands | Doc review | Reviewer can execute setup and validation without guessing missing steps | `README.md` review |
+| API docs | Postman collection is committed and valid JSON | Artifact validation | Collection parses and imports in Postman | `jq empty docs/api/ravid-assessment.postman_collection.json` |
+| API docs | OpenAPI contract remains available and linked from README | Doc review | OpenAPI path is explicit and reachable | `README.md` + `docs/01-architecture/api_contract.yaml` |
+| API coverage | Collection covers all required endpoints | Doc review | requests exist for register, login, upload, perform-operation, task-status, download | `docs/api/ravid-assessment.postman_collection.json` review |
+| Observability | Slow-operations dashboard table keeps valid structure after max-duration tuning | Unit | dashboard JSON remains valid and service variable/query guard still passes | `./.venv/bin/python manage.py test tests.unit.test_observability_dashboard_units --settings=config.settings.test` |
+| Regression | Authentication endpoints still satisfy documented behavior | Integration | auth suite passes with expected response shapes | `./.venv/bin/python manage.py test tests.integration.test_authentication_api --settings=config.settings.test` |
+| Regression | Upload, operation dispatch, task-status, and download contracts remain stable | Integration | endpoint integration suites pass | `./.venv/bin/python manage.py test tests.integration.test_csv_upload_api tests.integration.test_operation_dispatch_api tests.integration.test_task_status_api tests.integration.test_operation_download_api --settings=config.settings.test` |
+| Repo hygiene | Docs changes preserve repo checks gate | Repo checks | repo checks pass with no formatting/path drift issues | `./scripts/ci/run_repo_checks.sh` |
 
 ## Validation Note
 
-- Local heavy `manage.py test` execution is intentionally skipped in this pass due host RAM constraints.
-- CI remains the authoritative full-suite validation source.
+- This patch is delivery-doc focused and includes a dashboard presentation update.
+- Integration suites are executed to guard against accidental API contract drift.
