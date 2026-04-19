@@ -3,74 +3,77 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-pr-ci-pipeline`
-- Last Updated: `2026-04-18`
-- Current Step: workflow, scripts, local validation, and delivery docs complete
-- Next Step: push the branch, manually trigger the workflow remotely, and open review
-- Validation State: local repo checks, Python tests, and container validation passed
+- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Last Updated: `2026-04-19`
+- Current Step: runtime hardening implementation and validation complete
+- Next Step: push branch and open PR
+- Validation State: lightweight local checks passed; CI to re-validate full suite
 - PR/Merge State: ready for review on feature branch
 
 ## Outcome
 
-- Target: deliver a strict PR CI workflow plus the minimal Docker assets and reusable local scripts required to run and prove that workflow before publishing
+- Target: stabilize runtime compose behavior and slash-handling ergonomics without expanding product scope
 - Dependencies:
   - `docs/02-features/07-docker-and-delivery/spec.md`
   - `docs/assessment.md`
   - `.agents/references/assessment-decisions.md`
-  - `docs/01-architecture/docker.md`
-  - `docs/01-architecture/testing.md`
+  - `compose.yaml`
+  - `docker/loki/config.yaml`
 
 ## Steps
 
 1. Step:
-   define the CI scope, workflow gates, and local execution contract in the `07-docker-and-delivery` docs before changing delivery assets
+   capture current runtime failures with direct evidence from compose state and endpoint probes
    - Validation:
-     `./.venv/bin/python .agents/scripts/validate_agents.py`
+     `docker compose ps -a && docker compose logs loki worker web`
    - Expected artifact:
-     populated `spec.md`, `plan.md`, and `test_matrix.md` for the PR CI slice
+     reproducible failure context for Loki TSDB config, worker migration race, and slashless POST runtime error
    - Status:
      completed
 
 2. Step:
-   implement strict CI assets: GitHub Actions workflow, local CI shell scripts, Docker build config, and container-compose validation config
-  - Validation:
-     `docker compose -f compose.ci.yaml config --quiet`
-  - Expected artifact:
-     `.github/workflows/pr-ci.yml`, `scripts/ci/*.sh`, `.dockerignore`, `docker/django/Dockerfile`, and `compose.ci.yaml`
-  - Status:
+   apply runtime hardening fixes in compose and routing while preserving canonical API contract
+   - Validation:
+     `docker compose -f compose.yaml config --quiet`
+   - Expected artifact:
+     updated `compose.yaml`, `docker/loki/config.yaml`, and API URL modules with optional-trailing-slash route aliases
+   - Status:
      completed
 
 3. Step:
-   manually execute the host-runner and containerized CI scripts locally and fix any failures before publication
-  - Validation:
-     `./scripts/ci/run_repo_checks.sh && ./scripts/ci/run_python_tests.sh && ./scripts/ci/run_container_validation.sh`
-  - Expected artifact:
-     locally proven CI commands with captured results in `validation-report.md`
-  - Status:
+   run strict lightweight validation and capture evidence (no local heavy tests)
+   - Validation:
+     `./scripts/ci/run_repo_checks.sh`
+     `docker compose down -v --remove-orphans && docker compose up --build -d`
+     `docker compose ps -a`
+     `curl` probes for slash and slashless endpoints
+   - Expected artifact:
+     green runtime checks and concrete evidence lines for service health + endpoint behavior
+   - Status:
      completed
 
 4. Step:
-   update README and final workstream artifacts, then push the branch, manually trigger the workflow remotely, and open the PR
-  - Validation:
-     `gh workflow run pr-ci.yml --ref feature/07-docker-and-delivery-pr-ci-pipeline`
-  - Expected artifact:
-     updated `README.md`, closeout docs, pushed branch, successful workflow dispatch evidence, and PR metadata
-  - Status:
-     in_progress
+   align README and 07 closeout artifacts with implemented hardening behavior
+   - Validation:
+     doc review + `git diff --check`
+   - Expected artifact:
+     updated `README.md`, `spec.md`, `plan.md`, `test_matrix.md`, `validation-report.md`, `pr-review.md`, and `pull_request.md`
+   - Status:
+     completed
 
 ## Risks
 
 - Risk:
-  the workflow YAML drifts from the commands developers actually run locally
+  slashless aliases unintentionally alter canonical documented API contract
 - Mitigation:
-  centralize the commands in `scripts/ci/*.sh` and have both local validation and GitHub Actions call those scripts directly
+  keep canonical slash routes documented; treat slashless as compatibility aliases only
 
 - Risk:
-  container validation looks real but does not actually exercise PostgreSQL and Redis readiness
+  runtime passes locally but drifts in CI
 - Mitigation:
-  use Compose healthchecks plus local-settings Django commands inside the built app container
+  keep CI workflow unchanged and require PR checks to pass before merge
 
 - Risk:
-  the repo gains Docker and workflow files that are not documented or validated before push
+  local heavy test execution destabilizes developer machine
 - Mitigation:
-  update README and workstream artifacts in the same slice and run the exact CI commands locally before publishing
+  intentionally skip local heavy tests in this pass; use CI as full-suite gate

@@ -15,9 +15,8 @@
 
 ## Residual Risks
 
-- This slice delivers PR CI and its minimal Docker validation assets, not the full final Docker/Compose delivery stack for the assessment.
-- Remote GitHub Actions runtime differences are reduced by the local manual run, but the branch still needs one successful hosted workflow dispatch before merge confidence is maximal.
+- Full test-suite confidence depends on PR CI because local heavy tests were intentionally skipped for RAM safety.
 
 ## Recommendation
 
-- Approve
+- Approve after CI is green.

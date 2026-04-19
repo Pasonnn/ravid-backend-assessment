@@ -3,35 +3,39 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-pr-ci-pipeline`
-- Last Updated: `2026-04-18`
-- Current Step: local CI validation and documentation complete
-- Next Step: manually trigger the workflow remotely and open the PR
-- Validation State: passing for the implemented PR-CI scope
+- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Last Updated: `2026-04-19`
+- Current Step: runtime hardening validated locally with lightweight checks
+- Next Step: push branch and confirm PR CI
+- Validation State: local lightweight checks passed; full suite delegated to CI
 - PR/Merge State: ready for review on feature branch
 
 ## Summary
 
-- Scope: strict PR CI workflow, reusable CI scripts, Docker build asset, Compose validation stack, local-runtime smoke test, and README delivery notes
-- Date: `2026-04-18`
+- Scope: runtime stability hardening for compose stack + slashless API compatibility aliases
+- Date: `2026-04-19`
+- Constraint: local heavy tests intentionally not executed due RAM limits
 
 ## Results
 
 | Command | Purpose | Result | Evidence |
 | --- | --- | --- | --- |
-| `./scripts/ci/run_repo_checks.sh` | Run pip dependency sanity, formatter checks, repo workflow validation, assessment coverage validation, and Django check under `config.settings.test` | passed | `No broken requirements found.`, `38 files would be left unchanged.`, `Agent structure is valid.`, `Assessment coverage markers are present.`, `System check identified no issues (0 silenced).` |
-| `./scripts/ci/run_python_tests.sh` | Run all unit, integration, and smoke tests under `config.settings.test` | passed | `Ran 43 tests ... OK (skipped=3)` |
-| `docker compose -f compose.ci.yaml config --quiet` | Validate Compose syntax and service wiring | passed | command exited cleanly |
-| `./scripts/ci/run_container_validation.sh` | Build the app image, boot PostgreSQL and Redis, run migrations, `manage.py check`, and containerized tests under `config.settings.local` | passed | image built, infra services became healthy, `System check identified no issues`, `Ran 35 tests ... OK` |
-| `git diff --check` | Confirm there are no whitespace or patch-format issues | passed | no output |
+| `./scripts/ci/run_repo_checks.sh` | Verify formatter, agent/docs checks, Django check, and compose/config observability file checks | passed | `57 files would be left unchanged.`, `Agent structure is valid.`, `Assessment coverage markers are present.`, `System check identified no issues (0 silenced).` |
+| `docker compose down -v --remove-orphans && docker compose up --build -d` | Rebuild and cold-start full runtime stack | passed | services created and started without compose failure |
+| `docker compose ps -a` | Validate service runtime status | passed | `loki` `Up`, `worker` `Up`, `web` `Up`, infra healthy |
+| `docker compose logs --no-color --tail=120 loki` | Validate Loki boot with updated config | passed | `Starting Loki`, `Loki started`; no TSDB config validation error |
+| `docker compose logs --no-color --tail=120 worker` | Validate worker startup behavior | passed | Celery worker banner shown, queue/task registration visible, no migration schema race crash |
+| `curl -X POST http://localhost:8000/api/register ...` | Slashless register compatibility | passed | `HTTP:200` with `{"message":"Registration successful", ...}` |
+| `curl -X POST http://localhost:8000/api/register/ ...` | Canonical register route regression check | passed | `HTTP:200` with registration payload |
+| `curl http://localhost:8000/api/task-status?task_id=dummy` | Slashless protected-route auth behavior | passed | `HTTP:401` with auth-required detail |
+| `curl http://localhost:8000/api/task-status/?task_id=dummy` | Canonical protected-route auth behavior | passed | `HTTP:401` with auth-required detail |
 
 ## Failures Or Gaps
 
-- The first container-validation attempt failed because the existing `tests.smoke.test_foundation` suite includes a `config.settings.test` assertion. The slice now resolves that by using `tests.smoke.test_local_runtime` for the containerized local-settings path and skipping that smoke class outside `config.settings.local`.
-- Remote GitHub Actions execution is not yet recorded in this report; that will be captured after the branch is pushed and the workflow is dispatched manually.
+- No runtime failures remain from the reported issues (`loki` and `worker` exits, slashless POST runtime error).
+- Local heavy test execution was intentionally skipped due host RAM constraints.
 
 ## Follow-Up
 
-- Push the branch.
-- Trigger `pr-ci.yml` with `workflow_dispatch` on this branch and record the run URL.
-- Open the PR after the remote workflow run is green.
+- Push branch and open PR to `main`.
+- Use PR CI results as authoritative full-suite validation evidence before merge.
