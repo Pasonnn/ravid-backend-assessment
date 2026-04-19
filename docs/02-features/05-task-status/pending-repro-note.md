@@ -7,7 +7,7 @@ This note documents a deterministic way to observe `PENDING` from `GET /api/task
 ## Important Reviewer Comment
 
 This is a **reproduction-only validation procedure** for demonstration purposes.
-It is **not** a product behavior change and does not alter normal runtime logic.
+It uses a **reviewer-only delay toggle** that is disabled by default and should not be enabled in normal runtime.
 
 ## Why this note exists
 
@@ -17,20 +17,20 @@ For small/fast CSV inputs, Celery may finish before manual polling occurs, which
 
 1. Start stack:
    - `docker compose up --build -d`
-2. Authenticate and get access token.
-3. Upload any CSV and trigger an operation (`/api/perform-operation/`) to get `task_id`.
-4. Stop worker before dispatching a second operation:
-   - `docker compose stop worker`
+2. Set worker delay for reproduction (example: `1ms` per row):
+   - `export OPERATION_DEBUG_DELAY_PER_ROW_MS=1`
+   - `docker compose up -d worker`
+3. Authenticate and get access token.
+4. Upload a large CSV (`stress_10000.csv` recommended).
 5. Dispatch operation and immediately call:
    - `GET /api/task-status/?task_id=<task_id>`
-6. Expected result while worker is stopped:
+6. Expected while task is still processing:
    - `{ "task_id": "...", "status": "PENDING" }`
-7. Resume worker:
-   - `docker compose start worker`
-8. Poll task status again until terminal state (`SUCCESS` or `FAILURE`).
+7. Continue polling until terminal state (`SUCCESS` or `FAILURE`).
+8. Disable reproduction delay after verification:
+   - `export OPERATION_DEBUG_DELAY_PER_ROW_MS=0`
+   - `docker compose up -d worker`
 
 ## Observed Local Evidence (2026-04-19)
 
-- Dispatch with worker stopped returned `task_id` successfully.
-- Immediate status check returned `PENDING`.
-- After worker restart, task reached `SUCCESS` with preview + file link.
+- With `OPERATION_DEBUG_DELAY_PER_ROW_MS=1` and `stress_10000.csv`, status checks consistently returned `PENDING` during processing window before transitioning to `SUCCESS`.

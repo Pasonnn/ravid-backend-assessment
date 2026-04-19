@@ -2,13 +2,39 @@ from __future__ import annotations
 
 import csv
 import io
+import os
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
+from time import sleep
 
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
 from apps.operations.models import CsvOperationJob
+
+
+def _load_row_delay_seconds() -> float:
+    raw_value = os.environ.get("OPERATION_DEBUG_DELAY_PER_ROW_MS", "0").strip()
+    if not raw_value:
+        return 0.0
+
+    try:
+        milliseconds = float(raw_value)
+    except ValueError:
+        return 0.0
+
+    if milliseconds <= 0:
+        return 0.0
+
+    return milliseconds / 1000.0
+
+
+ROW_DELAY_SECONDS = _load_row_delay_seconds()
+
+
+def _maybe_delay_per_row() -> None:
+    if ROW_DELAY_SECONDS > 0:
+        sleep(ROW_DELAY_SECONDS)
 
 
 def run_operation_and_store_output(*, job: CsvOperationJob) -> str:
@@ -82,6 +108,7 @@ def _dedup_rows(
     seen: set[tuple[str, ...]] = set()
     deduped: list[dict[str, str]] = []
     for row in rows:
+        _maybe_delay_per_row()
         key = tuple(row.get(field, "") for field in fieldnames)
         if key in seen:
             continue
@@ -94,6 +121,7 @@ def _unique_rows(*, column: str, rows: list[dict[str, str]]) -> list[dict[str, s
     seen: set[str] = set()
     unique_values: list[dict[str, str]] = []
     for row in rows:
+        _maybe_delay_per_row()
         value = row.get(column, "")
         if value in seen:
             continue
@@ -115,6 +143,7 @@ def _filter_rows(
 
     filtered: list[dict[str, str]] = []
     for row in rows:
+        _maybe_delay_per_row()
         if _matches_all_filters(row=row, filters=filters):
             filtered.append(row)
     return filtered

@@ -113,7 +113,7 @@ docker compose down -v
 
 ## Reviewer Note (PENDING Reproduction)
 
-If you need to deterministically observe `PENDING` for `task-status`, use [docs/02-features/05-task-status/pending-repro-note.md](/home/pason/Works/ravid/interview-project/docs/02-features/05-task-status/pending-repro-note.md). This is a reproduction-only validation aid, not a runtime behavior change.
+If you need to deterministically observe `PENDING` for `task-status`, use [docs/02-features/05-task-status/pending-repro-note.md](/home/pason/Works/ravid/interview-project/docs/02-features/05-task-status/pending-repro-note.md). It uses a reviewer-only worker delay toggle that is disabled by default.
 
 ## Observability
 
@@ -135,4 +135,5 @@ See `.env.example` for required runtime variables, including:
 - Django runtime values (`DJANGO_*`)
 - PostgreSQL connection values (`POSTGRES_*`)
 - Redis/Celery values (`REDIS_URL`, `CELERY_*`)
+- Optional reviewer-only task delay toggle (`OPERATION_DEBUG_DELAY_PER_ROW_MS`)
 - Grafana admin credentials (`GF_SECURITY_ADMIN_*`)
