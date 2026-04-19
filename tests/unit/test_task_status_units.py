@@ -148,6 +148,9 @@ class TaskStatusServiceUnitTests(TestCase):
         self.assertIsNone(get_download_file_for_job(job=job))
 
     def test_get_preview_rows_for_job_handles_empty_header(self) -> None:
+        # Create the job before patching storage methods to avoid affecting file save paths.
+        job = self.create_job(output_storage_path="processed/user_1/empty.csv")
+
         with patch(
             "apps.operations.services.default_storage.exists", return_value=True
         ):
@@ -155,5 +158,4 @@ class TaskStatusServiceUnitTests(TestCase):
                 "apps.operations.services.default_storage.open",
                 return_value=ContentFile(b""),
             ):
-                job = self.create_job(output_storage_path="processed/user_1/empty.csv")
                 self.assertEqual(get_preview_rows_for_job(job=job, limit=10), [])
