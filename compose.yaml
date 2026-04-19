@@ -15,6 +15,8 @@ services:
       timeout: 5s
       retries: 12
       start_period: 5s
+    ports:
+      - "127.0.0.1:${POSTGRES_PUBLISHED_PORT:-5432}:5432"
 
   redis:
     image: redis:7-alpine
@@ -25,6 +27,8 @@ services:
       timeout: 3s
       retries: 12
       start_period: 3s
+    ports:
+      - "127.0.0.1:${REDIS_PUBLISHED_PORT:-6379}:6379"
 
   web:
     build:
@@ -93,6 +97,8 @@ services:
     volumes:
       - ./docker/loki/config.yaml:/etc/loki/config.yaml:ro
       - loki_data:/loki
+    ports:
+      - "127.0.0.1:${LOKI_PUBLISHED_PORT:-3100}:3100"
 
   alloy:
     image: grafana/alloy:v1.8.2
@@ -100,6 +106,8 @@ services:
     volumes:
       - ./docker/alloy/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - "127.0.0.1:${ALLOY_PUBLISHED_PORT:-12345}:12345"
     depends_on:
       - web
       - worker

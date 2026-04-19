@@ -98,6 +98,12 @@ Access points:
 
 - API: `http://localhost:8000`
 - Grafana: `http://localhost:3000` (defaults from `.env.example`)
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+- Loki API: `http://localhost:3100`
+- Alloy UI: `http://localhost:12345`
+
+All non-web/Grafana infra ports are published on `127.0.0.1` only.
 
 Tear down:
 
