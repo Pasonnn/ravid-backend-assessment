@@ -143,7 +143,7 @@ Single-command full Python suite:
 
 1. Open Grafana at `http://localhost:3000`.
 2. Sign in with `GF_SECURITY_ADMIN_USER` / `GF_SECURITY_ADMIN_PASSWORD` from `.env`.
-3. Open dashboard: `RAVID Observability Overview`.
+3. Open dashboard: `R.A.V.I.D. Observability`.
 4. Confirm panels update after API calls:
    - live logs by service (`django`, `celery`)
    - error log count (last 30 minutes)
@@ -152,7 +152,7 @@ Single-command full Python suite:
 ## 7) Reviewer Notes
 
 - Unknown or foreign `file_id` / `task_id` on protected resources returns `404` by design.
-- `GET /api/task-status/` defaults `n=100`; `n > 1000` returns `400`.
+- `GET /api/task-status/` defaults `n=100`; `n` must be a positive integer.
 - Optional reviewer-only task delay toggle:
   - `OPERATION_DEBUG_DELAY_PER_ROW_MS=0` (default)
   - Set temporarily to `1` for deterministic `PENDING` observation as documented in [`docs/02-features/05-task-status/pending-repro-note.md`](docs/02-features/05-task-status/pending-repro-note.md).

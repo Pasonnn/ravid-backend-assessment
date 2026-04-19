@@ -16,7 +16,7 @@ Read these before substantial work:
 2. `.agents/WORKFLOW.md`
 3. `.agents/MISTAKE.md`
 4. `docs/00-anchor/task.md`
-5. `docs/assessment.md`
+5. `docs/00-anchor/srs.md`
 6. `.agents/references/assessment-decisions.md`
 7. Relevant skill in `.agents/skills/`
 8. Relevant workstream docs in `docs/02-features/<nn-workstream>/`
@@ -26,7 +26,7 @@ Read these before substantial work:
 
 When guidance conflicts, use this order:
 
-1. `docs/assessment.md`
+1. `docs/00-anchor/srs.md`
 2. `.agents/references/assessment-decisions.md`
 3. `.agents/AGENTS.md`
 4. `.agents/WORKFLOW.md`
@@ -40,7 +40,7 @@ Before planning or coding in a fresh AI session, run this resume pass in order:
 1. Check the current branch and `git status --short --branch`.
 2. Read `docs/00-anchor/task.md`.
 3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
-4. Read `docs/assessment.md`.
+4. Read `docs/00-anchor/srs.md`.
 5. Read `.agents/references/assessment-decisions.md`.
 6. Read any non-empty workstream docs under:
    - `docs/02-features/01-foundation/`

@@ -7,7 +7,7 @@ Use this file for all review passes in this repo.
 Read these before reviewing:
 
 1. `.agents/MISTAKE.md`
-2. `docs/assessment.md`
+2. `docs/00-anchor/srs.md`
 3. Active workstream docs in the relevant `docs/02-features/<workstream>/` folder
 4. The diff or changed files
 

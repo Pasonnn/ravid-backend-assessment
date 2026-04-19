@@ -15,7 +15,7 @@
 - Target: deliver operation payload validation, Celery dispatch, and operation execution persistence for `dedup`, `unique`, and `filter`
 - Dependencies:
   - `docs/02-features/04-processing-pipeline/spec.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `docs/01-architecture/api_contract.yaml`
   - `docs/01-architecture/database.md`

@@ -15,7 +15,7 @@ Before planning or coding in a fresh AI session, run this resume pass in order:
 1. Check the current branch and `git status --short --branch`.
 2. Read [`docs/00-anchor/task.md`](./docs/00-anchor/task.md).
 3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
-4. Read [`docs/assessment.md`](./docs/assessment.md).
+4. Read [`docs/00-anchor/srs.md`](./docs/00-anchor/srs.md).
 5. Read [`.agents/references/assessment-decisions.md`](./.agents/references/assessment-decisions.md).
 6. Read any non-empty workstream docs under `docs/02-features/`:
    - `01-foundation`

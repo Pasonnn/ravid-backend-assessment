@@ -7,7 +7,7 @@
 | Happy path | `SUCCESS` status returns bounded preview and `file_link` | API integration | endpoint returns `200`, `result.data`, and download link for owner | PR CI `python-tests (integration)` |
 | Happy path | Download endpoint returns processed CSV for owner | API integration | endpoint returns `200` file response with CSV content type | PR CI `python-tests (integration)` |
 | Validation | Missing `task_id` query parameter | API integration | endpoint returns `400` with validation error | PR CI `python-tests (integration)` |
-| Validation | Invalid `n` (`0`, negative, non-integer, >`1000`) | API integration | endpoint returns `400` for invalid preview bound | PR CI `python-tests (integration)` |
+| Validation | Invalid `n` (`0`, negative, non-integer) | API integration | endpoint returns `400` for invalid preview bound | PR CI `python-tests (integration)` |
 | Auth | Missing JWT for task-status and download endpoints | API integration | both endpoints return `401` | PR CI `python-tests (integration)` |
 | Auth | Foreign or unknown `task_id` | API integration | both endpoints return `404` without resource leakage | PR CI `python-tests (integration)` |
 | Async | `FAILURE` status returns persisted error message | API integration | endpoint returns `200` with `status: FAILURE` and `error` | PR CI `python-tests (integration)` |

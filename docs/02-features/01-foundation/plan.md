@@ -17,7 +17,7 @@
   - `docs/02-features/01-foundation/spec.md`
   - `docs/01-architecture/project_structure.md`
   - `docs/01-architecture/docker.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
 
 ## Steps

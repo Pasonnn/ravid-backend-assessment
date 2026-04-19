@@ -15,7 +15,7 @@
 - Target: deliver the protected CSV upload endpoint, persisted file metadata, regression-safe routing, and workstream delivery artifacts for the upload-only slice
 - Dependencies:
   - `docs/02-features/03-csv-upload/spec.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `docs/01-architecture/api_contract.yaml`
   - `docs/01-architecture/database.md`

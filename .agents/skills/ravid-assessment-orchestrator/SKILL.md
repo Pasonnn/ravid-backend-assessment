@@ -16,7 +16,7 @@ Before choosing the next task, gather progress in this order:
 1. Current branch and `git status --short --branch`
 2. `docs/00-anchor/task.md`
 3. Recent history from `git log --oneline --decorate --max-count=15`
-4. `docs/assessment.md`
+4. `docs/00-anchor/srs.md`
 5. `.agents/references/assessment-decisions.md`
 6. Any non-empty docs under `docs/02-features/01-foundation/` through `docs/02-features/07-docker-and-delivery/`
 7. `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md` when the task depends on requirements or terminology
@@ -25,7 +25,7 @@ If `docs/00-anchor/task.md` conflicts with branch state or git history, report t
 
 ## Required Read Order
 
-1. `docs/assessment.md`
+1. `docs/00-anchor/srs.md`
 2. `.agents/AGENTS.md`
 3. `.agents/WORKFLOW.md`
 4. `.agents/MISTAKE.md`

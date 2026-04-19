@@ -15,7 +15,7 @@
 - Target: deliver task-status lookup and authenticated processed-file download APIs with owner-safe behavior, bounded preview extraction, and regression-safe route/test updates
 - Dependencies:
   - `docs/02-features/05-task-status/spec.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `docs/01-architecture/api_contract.yaml`
 

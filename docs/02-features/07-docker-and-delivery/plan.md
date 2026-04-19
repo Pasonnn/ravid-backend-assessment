@@ -15,7 +15,7 @@
 - Target: close assessment blocker for missing API documentation collection and improve reviewer onboarding docs
 - Dependencies:
   - `docs/02-features/07-docker-and-delivery/spec.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `README.md`
   - `docs/01-architecture/api_contract.yaml`
