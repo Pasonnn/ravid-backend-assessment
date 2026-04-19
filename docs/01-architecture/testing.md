@@ -75,7 +75,7 @@ Focus on:
 - unknown or cross-user `task_id` returns `404`
 - pending task response
 - `n` defaults to `100`
-- `n` above `1000` returns `400`
+- non-positive or non-integer `n` returns `400`
 - success response with preview data
 - failure response with clear error description
 - processed file download succeeds for owned completed tasks

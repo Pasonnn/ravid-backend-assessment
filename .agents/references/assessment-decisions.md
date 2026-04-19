@@ -84,7 +84,6 @@ Document the supported operators in the feature spec before implementation.
 - Unknown `task_id` returns `404 Not Found`.
 - Internal `STARTED` state maps to public `PENDING`.
 - Query parameter `n` defaults to `100`.
-- Query parameter values above `1000` return a `400 Bad Request` validation error.
 - For the `unique` operation, preview `data` remains an array of row objects; each row contains a single key matching the selected column.
 - Processed output is served through an authenticated app endpoint:
   - `/api/operations/{task_id}/download/`

@@ -236,13 +236,40 @@ class TaskStatusApiTests(TestCase):
 
         invalid_queries = [
             "task_id=task-invalid-n&n=0",
-            "task_id=task-invalid-n&n=1001",
             "task_id=task-invalid-n&n=abc",
         ]
         for query in invalid_queries:
             response = self.client.get(f"/api/task-status/?{query}", **headers)
             self.assertEqual(response.status_code, 400)
             self.assertIn("error", response.json())
+
+    def test_task_status_accepts_large_n_values(self) -> None:
+        user, headers = self.create_user_and_headers("large-n@example.com")
+        rows = [
+            {"name": "Ada", "city": "Hanoi"},
+            {"name": "Tom", "city": "Saigon"},
+            {"name": "Zoe", "city": "Hue"},
+        ]
+        output_path = self.write_processed_csv(
+            owner_id=user.pk,
+            task_id="task-large-n",
+            rows=rows,
+        )
+        self.create_job(
+            owner=user,
+            task_id="task-large-n",
+            status=CsvOperationJob.Status.SUCCESS,
+            output_storage_path=output_path,
+        )
+
+        response = self.client.get(
+            "/api/task-status/?task_id=task-large-n&n=5000", **headers
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["status"], "SUCCESS")
+        self.assertEqual(payload["result"]["data"], rows)
 
     def test_task_status_returns_404_for_unknown_task_id(self) -> None:
         _, headers = self.create_user_and_headers("unknown@example.com")

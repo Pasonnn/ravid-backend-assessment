@@ -16,7 +16,7 @@ Before the audit, reconstruct repo progress in this order:
 1. Check the current branch and `git status --short --branch`.
 2. Read `docs/00-anchor/task.md`.
 3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
-4. Read `docs/assessment.md`.
+4. Read `docs/00-anchor/srs.md`.
 5. Read `.agents/references/assessment-decisions.md`.
 6. Inspect any non-empty files under `docs/02-features/01-foundation/` through `docs/02-features/07-docker-and-delivery/`.
 7. If requirements or terminology matter for the task, read `docs/00-anchor/brd.md`, `docs/00-anchor/srs.md`, and `docs/00-anchor/glossary.md`.
@@ -82,7 +82,7 @@ Do not create them during the audit unless the task explicitly asks for setup or
 - Identify business-rule or design ambiguity.
 - Identify missing dependencies, environments, or tool approvals.
 - Identify validation risks such as missing tests, unclear acceptance criteria, or absent fixtures.
-- Identify whether the task is covered by `docs/assessment.md` and `.agents/references/assessment-decisions.md`.
+- Identify whether the task is covered by `docs/00-anchor/srs.md` and `.agents/references/assessment-decisions.md`.
 
 ### 5. Proceed / Block Decision
 

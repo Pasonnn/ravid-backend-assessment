@@ -15,7 +15,7 @@
 - Target: deliver reviewer-facing registration and login endpoints with explicit validation behavior, JWT token issuance, and strict test coverage for the auth-related code path
 - Dependencies:
   - `docs/02-features/02-authentication/spec.md`
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `docs/01-architecture/api_contract.yaml`
   - `docs/01-architecture/testing.md`

@@ -37,7 +37,6 @@ REQUIRED_FILES = [
     ".agents/skills/observability-compose-delivery/agents/openai.yaml",
     ".agents/skills/review-mistake-guard/SKILL.md",
     ".agents/skills/review-mistake-guard/agents/openai.yaml",
-    "docs/assessment.md",
 ]
 
 

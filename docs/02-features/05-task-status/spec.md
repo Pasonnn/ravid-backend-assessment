@@ -30,7 +30,6 @@
     - `n` for preview size
     - default `100`
     - minimum `1`
-    - maximum `1000`
 - Success response behavior:
   - internal job `PENDING` and `STARTED` both map to public `PENDING`
   - `SUCCESS` returns:
@@ -86,7 +85,7 @@
 - [x] `GET /api/task-status/` is implemented with the documented contract
 - [x] `GET /api/operations/{task_id}/download/` is implemented with owner-safe behavior
 - [x] internal `STARTED` is mapped to public `PENDING`
-- [x] `n` defaults to `100` and values above `1000` return `400`
+- [x] `n` defaults to `100` and must be a positive integer
 - [x] unknown or foreign `task_id` returns `404` without leaking resource existence
 - [x] operation dispatch and auth/upload behavior remain unchanged
 

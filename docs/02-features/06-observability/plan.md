@@ -14,7 +14,7 @@
 
 - Target: deliver structured logging, log aggregation, and Grafana visibility for Django and Celery services
 - Dependencies:
-  - `docs/assessment.md`
+  - `docs/00-anchor/srs.md`
   - `.agents/references/assessment-decisions.md`
   - `docs/01-architecture/observability.md`
   - `docs/01-architecture/docker.md`

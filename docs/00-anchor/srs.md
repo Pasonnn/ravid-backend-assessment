@@ -59,8 +59,7 @@ The system is a Django-based backend that supports:
 
 - The system shall expose `GET /api/task-status/`.
 - The request shall accept `task_id` and optional `n`.
-- The request parameter `n` shall default to `100` and shall not exceed `1000`.
-- Requests with `n` above `1000` shall return a validation error.
+- The request parameter `n` shall default to `100` and shall be a positive integer.
 - The endpoint shall return `PENDING`, `SUCCESS`, or `FAILURE`.
 - On success, the endpoint shall return preview data and a processed file link.
 - On failure, the endpoint shall return a clear error description.

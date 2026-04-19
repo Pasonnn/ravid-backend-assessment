@@ -301,7 +301,6 @@ paths:
             type: integer
             default: 100
             minimum: 1
-            maximum: 1000
       responses:
         '200':
           description: >
@@ -315,7 +314,7 @@ paths:
                   - $ref: '#/components/schemas/TaskSuccessResponse'
                   - $ref: '#/components/schemas/TaskFailureResponse'
         '400':
-          description: Invalid query parameters such as an out-of-range `n`
+          description: Invalid query parameters such as a missing `task_id` or non-positive `n`
           content:
             application/json:
               schema:

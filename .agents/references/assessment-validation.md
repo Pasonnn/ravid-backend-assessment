@@ -1,6 +1,6 @@
 # Assessment Validation
 
-This file records the practical interpretation of `docs/assessment.md` for implementation work.
+This file records the practical interpretation of `docs/00-anchor/srs.md` for implementation work.
 
 ## Validation Summary
 

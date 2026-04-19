@@ -13,7 +13,7 @@ Use this skill for every substantial review in this repo.
 
 1. `.agents/MISTAKE.md`
 2. `.agents/guidelines/code-review-guidelines.md`
-3. `docs/assessment.md`
+3. `docs/00-anchor/srs.md`
 4. `docs/02-features/<current-workstream>/pr-review.md` if it exists
 5. the diff or changed files
 

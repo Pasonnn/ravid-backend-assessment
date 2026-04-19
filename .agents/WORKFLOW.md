@@ -9,7 +9,7 @@ Run this before planning or coding in every fresh AI session.
 1. Check the current branch and `git status --short --branch`.
 2. Read `docs/00-anchor/task.md`.
 3. Inspect recent history with `git log --oneline --decorate --max-count=15`.
-4. Read `docs/assessment.md`.
+4. Read `docs/00-anchor/srs.md`.
 5. Read `.agents/references/assessment-decisions.md`.
 6. Inspect any non-empty files under:
    - `docs/02-features/01-foundation/`
@@ -56,7 +56,7 @@ Before substantial work, read in this order:
 2. `.agents/WORKFLOW.md`
 3. `.agents/MISTAKE.md`
 4. `docs/00-anchor/task.md`
-5. `docs/assessment.md`
+5. `docs/00-anchor/srs.md`
 6. `.agents/references/assessment-decisions.md`
 7. The relevant skill in `.agents/skills/`
 8. The active workstream docs in `docs/02-features/<nn-workstream>/`
@@ -75,7 +75,7 @@ Complete this before planning or coding:
 - Run `.agents/skills/agent-self-audit/SKILL.md`.
 - Read `.agents/MISTAKE.md` and note any active rules relevant to the task.
 - Validate that the selected skills, guidelines, templates, and references cover the task.
-- Validate the task against `docs/assessment.md` and `.agents/references/assessment-decisions.md`.
+- Validate the task against `docs/00-anchor/srs.md` and `.agents/references/assessment-decisions.md`.
 - If the current workstream docs are empty, state that and fall back to `docs/00-anchor/task.md` plus git history for progress reconstruction.
 - Surface missing constraints, design conflicts, package or app boundary issues, and documentation gaps before implementation.
 - Stop only if a real blocker remains after codebase analysis.
