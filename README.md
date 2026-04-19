@@ -111,6 +111,10 @@ Tear down:
 docker compose down -v
 ```
 
+## Reviewer Note (PENDING Reproduction)
+
+If you need to deterministically observe `PENDING` for `task-status`, use [docs/02-features/05-task-status/pending-repro-note.md](/home/pason/Works/ravid/interview-project/docs/02-features/05-task-status/pending-repro-note.md). This is a reproduction-only validation aid, not a runtime behavior change.
+
 ## Observability
 
 - Django and Celery logs are emitted as JSON to stdout.
