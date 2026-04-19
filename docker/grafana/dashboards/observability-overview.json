@@ -24,15 +24,15 @@
           "type": "loki",
           "uid": "loki"
         },
-        "query": "label_values(service)",
+        "query": "label_values({service=~\"django|celery\"}, service)",
         "refresh": 2,
         "multi": true,
         "includeAll": true,
-        "allValue": ".*",
+        "allValue": "django|celery",
         "current": {
           "selected": true,
           "text": "All",
-          "value": ".*"
+          "value": "django|celery"
         }
       }
     ]
@@ -85,7 +85,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(count_over_time({service=~\"$service\"} | json | level=\"ERROR\" [30m]))",
+          "expr": "sum(count_over_time({service=~\"$service\"} | json | level=\"ERROR\" [30m])) or vector(0)",
           "queryType": "instant"
         }
       ],
@@ -118,7 +118,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "topk(5, max_over_time({service=\"celery\"} | json | unwrap duration_ms [30m]))",
+          "expr": "topk(5, max_over_time({service=\"celery\"} | json | unwrap duration_ms | __error__=\"\" [30m]))",
           "queryType": "instant",
           "legendFormat": "{{operation}}"
         }
