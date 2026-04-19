@@ -1,0 +1,7 @@
+id,name,department,status,notes
+1,Alice,Engineering,active,backend-owner
+2,Brian,Sales,inactive,field-team
+3,Celine,Engineering,active,api-platform
+4,Derek,Support,active,tier-2
+5,Elena,Sales,active,key-account
+6,Farah,Engineering,inactive,on-leave
