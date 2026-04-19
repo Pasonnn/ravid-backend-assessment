@@ -83,6 +83,7 @@ services:
       CELERY_RESULT_BACKEND: ${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
       APP_SERVICE_NAME: celery
       APP_ENVIRONMENT: local
+      OPERATION_DEBUG_DELAY_PER_ROW_MS: ${OPERATION_DEBUG_DELAY_PER_ROW_MS:-0}
     volumes:
       - media_data:/app/media
     depends_on:
