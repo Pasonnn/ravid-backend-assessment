@@ -2,14 +2,17 @@
 
 | Area | Scenario | Type | Expected Result | Command Or Evidence |
 | --- | --- | --- | --- | --- |
-| Happy path | PR workflow runs automatically for pull requests to `main` | Workflow review | `.github/workflows/pr-ci.yml` defines `pull_request` on `main` plus named validation jobs | workflow file review |
-| Validation | Manual workflow dispatch is available | Workflow review | workflow exposes `workflow_dispatch` for branch-level manual execution | workflow file review or `gh workflow view` |
-| Validation | Host-runner repo checks fail fast on formatter or agent-structure drift | Local CI script | `run_repo_checks.sh` exits non-zero when `black`, `validate_agents`, or `check_assessment_coverage` fails | `./scripts/ci/run_repo_checks.sh` |
-| Validation | Host-runner Python suite runs all unit, integration, and smoke tests | Local CI script | `run_python_tests.sh` runs the full `tests.unit`, `tests.integration`, and `tests.smoke` suite under `config.settings.test` | `./scripts/ci/run_python_tests.sh` |
-| Auth | Existing auth and protected-route behavior remain green under CI | Regression | current auth tests still pass under host-runner and containerized CI executions | local CI scripts plus test output |
-| Async | Container validation boots Redis and PostgreSQL before running Django commands | Docker / compose | `compose.ci.yaml` includes healthchecks and `app` depends on healthy infra services | compose review plus `./scripts/ci/run_container_validation.sh` |
-| Observability | Container validation emits actionable logs on failure | Script review | compose logs are printed before teardown when the containerized validation script fails | script review |
-| Docker | Docker config parses, app image builds, migrations run, and Django checks pass inside the built container | Container validation | `docker compose config`, `build`, `migrate`, and `check` succeed using `compose.ci.yaml` | `./scripts/ci/run_container_validation.sh` |
-| Docker | Containerized test execution uses a local-runtime smoke target instead of the SQLite-only test-settings assertions | Container validation | container tests pass under `config.settings.local` by combining unit, integration, and `tests.smoke.test_local_runtime` | `./scripts/ci/run_container_validation.sh` |
-| Regression | Local scripts are the same commands invoked by GitHub Actions | Workflow / script review | workflow calls `scripts/ci/*.sh` directly rather than duplicating logic | workflow file review |
-| Regression | README documents the local pre-push CI commands | Doc review | developers can run the exact workflow checks locally before pushing | README review |
+| Validation | Repo-level checks remain green after hardening changes | Local CI script | formatter/agent checks/Django check and compose-parse checks pass | `./scripts/ci/run_repo_checks.sh` |
+| Docker | Runtime compose parses successfully | Compose validation | `compose.yaml` is syntactically valid | `docker compose -f compose.yaml config --quiet` |
+| Docker | Loki starts and stays running | Runtime smoke | `loki` service status is `Up` and no TSDB-config crash occurs | `docker compose ps -a` + `docker compose logs loki` |
+| Async | Worker starts Celery without migration-race crash | Runtime smoke | `worker` service status is `Up` and Celery startup banner appears | `docker compose ps -a` + `docker compose logs worker` |
+| API | Slashless register POST works | API smoke | `POST /api/register` returns `200` with registration response | `curl -X POST http://localhost:8000/api/register ...` |
+| API | Canonical slash register POST still works | API smoke | `POST /api/register/` returns `200` | `curl -X POST http://localhost:8000/api/register/ ...` |
+| Auth | Protected endpoint auth guard unchanged on slashless path | API smoke | anonymous `GET /api/task-status?task_id=...` returns `401` | `curl http://localhost:8000/api/task-status?task_id=dummy` |
+| Auth | Protected endpoint auth guard unchanged on canonical path | API smoke | anonymous `GET /api/task-status/?task_id=...` returns `401` | `curl http://localhost:8000/api/task-status/?task_id=dummy` |
+| Regression | CI full suite remains sharded and unchanged | Workflow review | PR CI still runs `unit`, `integration`, and `smoke` shards plus container validation | `.github/workflows/pr-ci.yml` |
+
+## Validation Note
+
+- Local heavy `manage.py test` execution is intentionally skipped in this pass due host RAM constraints.
+- CI remains the authoritative full-suite validation source.

@@ -3,93 +3,71 @@
 ## Progress Snapshot
 
 - Status: completed
-- Current Branch: `feature/07-docker-and-delivery-pr-ci-pipeline`
-- Last Updated: `2026-04-18`
-- Current Step: strict PR CI workflow, local scripts, and container validation assets completed
-- Next Step: push the branch, manually trigger the workflow remotely, and open review
-- Validation State: host-runner and containerized CI commands passed locally
+- Current Branch: `feature/07-docker-and-delivery-runtime-hardening`
+- Last Updated: `2026-04-19`
+- Current Step: runtime hardening for local delivery completed
+- Next Step: open PR to `main`
+- Validation State: strict lightweight local validation passed; CI remains authoritative for full test suite
 - PR/Merge State: ready for review on feature branch
 
 ## Goal
 
 - Feature: `07-docker-and-delivery`
-- Why it exists: add a strict pull-request CI pipeline that validates the repo checks, Python test suite, Docker image build, and containerized application checks before code reaches `main`
-- What success looks like: every PR targeting `main` automatically runs a documented GitHub Actions workflow that enforces repo validation, unit/integration/smoke tests, Docker build validity, and containerized validation against PostgreSQL and Redis, with the same commands reusable locally before push
+- Why it exists: finalize runtime reliability and delivery ergonomics after CI pipeline implementation
+- What success looks like: local runtime stack boots cleanly (`web`, `worker`, `db`, `redis`, `alloy`, `loki`, `grafana`), API calls work with canonical and slashless paths, and delivery artifacts match real behavior
 
 ## Contracts
 
-### Public Delivery Interfaces
+### Runtime Compose Contract
 
-#### GitHub Actions Workflow
+- File: `compose.yaml`
+- `web` remains the migration owner at startup.
+- `worker` starts Celery directly and does not run migrations.
+- Loki config must be valid for Loki `3.x` TSDB mode and boot without config validation failure.
 
-- File: `.github/workflows/pr-ci.yml`
-- Triggers:
-  - `pull_request` targeting `main`
-  - `workflow_dispatch` for manual execution
-- Permissions:
-  - read-only repository contents
-- Required jobs:
-  - Python validation on the host runner
-  - container validation through Docker Compose
-- Failure behavior:
-  - any failed job fails the workflow
-  - the workflow must not silently skip test or build steps
+### API Route Compatibility Contract
 
-#### Local CI Entry Points
+- Canonical public API contract remains slash-based endpoints from `docs/01-architecture/api_contract.yaml`.
+- Slashless aliases are accepted for the same endpoints to prevent `APPEND_SLASH` POST runtime errors when clients omit trailing slashes.
+- Auth and response contracts remain unchanged.
 
-- Files:
-  - `scripts/ci/run_repo_checks.sh`
-  - `scripts/ci/run_python_tests.sh`
-  - `scripts/ci/run_container_validation.sh`
-- Contract:
-  - the GitHub Actions workflow calls these scripts directly
-  - the same scripts can be run locally before push for reproducible validation
+### CI/Validation Contract
 
-#### Container Validation Assets
-
-- Files:
-  - `docker/django/Dockerfile`
-  - `compose.ci.yaml`
-  - `.dockerignore`
-- Contract:
-  - the CI build uses the checked-in Dockerfile
-  - container validation uses PostgreSQL and Redis services with healthchecks
-  - the application container must be able to run migrations, Django checks, and tests inside Docker
+- Existing PR CI gates remain unchanged:
+  - `Repo Checks`
+  - `Python Tests (unit|integration|smoke)`
+  - `Container Validation`
+- Local heavy `manage.py test` execution is intentionally skipped in this pass due host RAM constraints.
 
 ## Data Model
 
-- No new application-domain models are introduced for this slice.
-- Primary delivery entities are CI workflow definitions, container build config, and executable validation scripts.
+- No model or migration changes.
+- Scope is runtime delivery hardening and route ergonomics only.
 
 ## Async And Storage Behavior
 
-- This slice does not add new Celery task behavior.
-- Redis is exercised as a required supporting service for container validation because the local runtime contract depends on it.
-- PostgreSQL is exercised as the containerized database target for local-settings validation.
-- Media, static, and test artifacts remain ephemeral in CI and must not be committed back to the repo.
+- Celery runtime behavior unchanged except worker startup no longer competes on migrations.
+- File persistence and task processing contracts are unchanged.
 
 ## Observability
 
-- Full Grafana, Loki, and Alloy delivery remains deferred within the larger `07` workstream.
-- The PR CI workflow should emit enough command output to identify which validation stage failed.
-- Container validation should dump compose logs on failure before teardown so infrastructure breakages are diagnosable.
+- Grafana Alloy + Loki + Grafana stack remains version-controlled and runtime-bootable.
+- Loki config is updated to a valid single-node filesystem TSDB profile for current Loki image.
 
 ## Acceptance Criteria
 
-- [x] PRs targeting `main` automatically run a strict CI workflow from `.github/workflows/pr-ci.yml`
-- [x] the workflow exposes a manual `workflow_dispatch` trigger
-- [x] host-runner validation installs the project, runs repo checks, and runs all unit, integration, and smoke tests under `config.settings.test`
-- [x] container validation builds the application image and runs Django validation inside Docker against PostgreSQL and Redis
-- [x] the same CI scripts used by GitHub Actions can be executed locally before push
-- [x] README documents the local pre-push CI commands and the PR workflow purpose
+- [x] `compose.yaml` starts with healthy `db`/`redis` and running `web`/`worker`/`loki`/`alloy`/`grafana`
+- [x] Loki no longer exits with TSDB config validation errors
+- [x] Worker no longer exits on migration-race schema errors
+- [x] `POST /api/register` and `POST /api/register/` both succeed
+- [x] Auth-protected endpoints keep expected `401` behavior for anonymous requests on slash and slashless variants
+- [x] Workstream docs and README reflect the hardening pass
 
 ## Locked Decisions
 
-- Keep this slice focused on PR CI plus the minimum container/build assets required to make that CI real and strict.
-- Validate the Python test suite on `config.settings.test` for fast deterministic host-runner checks.
-- Validate Docker/container behavior separately on `config.settings.local` against PostgreSQL and Redis so infrastructure assumptions are exercised explicitly.
-- Fail the workflow on formatter, repo validation, test, Docker config, image build, migration, or containerized app-check errors.
-- Reuse checked-in shell scripts from both local runs and GitHub Actions instead of duplicating command logic in workflow YAML.
+- Keep canonical API docs slash-based; add slashless route aliases for runtime client resilience.
+- Keep CI scripts and workflow structure unchanged in this pass.
+- Use CI as the full-suite authority; skip local heavy tests on RAM-constrained machine.
 
 ## Open Questions
 

@@ -9,8 +9,8 @@ Private R.A.V.I.D. backend assessment repository for CSV upload, Celery processi
 - `03-csv-upload`: completed
 - `04-processing-pipeline`: completed
 - `05-task-status`: completed
-- `06-observability`: in progress on `feature/06-observability-alloy-loki-grafana`
-- `07-docker-and-delivery`: completed for strict PR-CI and container validation assets
+- `06-observability`: completed
+- `07-docker-and-delivery`: in progress on `feature/07-docker-and-delivery-runtime-hardening`
 
 ## Current API Surface
 
@@ -22,6 +22,11 @@ Implemented endpoints:
 - `POST /api/perform-operation/`
 - `GET /api/task-status/?task_id=<task_id>&n=<optional>`
 - `GET /api/operations/{task_id}/download/`
+
+Routing compatibility:
+
+- Canonical API contract keeps trailing-slash routes (for example `/api/register/`).
+- Slashless aliases are also accepted (for example `/api/register`) to prevent POST redirect/runtime errors when clients omit the trailing slash.
 
 Auth behavior:
 
@@ -83,6 +88,11 @@ Services in `compose.yaml`:
 - `alloy` (log collection)
 - `loki` (log storage)
 - `grafana` (dashboard)
+
+Runtime startup behavior:
+
+- `web` applies migrations before serving requests.
+- `worker` starts Celery directly (no concurrent migration run).
 
 Access points:
 
