@@ -106,6 +106,16 @@ Document the supported operators in the feature spec before implementation.
 - Use Grafana Alloy, not Promtail.
 - Keep Loki in single-node filesystem-backed mode for local assessment delivery.
 - Provision Grafana datasources and dashboards from files in version control.
+- Runtime service labels use:
+  - `service=django` for web API logs
+  - `service=celery` for worker logs
+- Keep Loki labels low-cardinality:
+  - label on `service`, `container`, and `job`
+  - keep high-cardinality fields like `task_id` and `file_id` in JSON payload only
+- Provision Grafana dashboard panels for this submission:
+  - required live log stream split/filterable by service
+  - error-level count for the last 30 minutes
+  - top 5 slowest CSV operations based on logged `duration_ms`
 
 ## Delivery
 
