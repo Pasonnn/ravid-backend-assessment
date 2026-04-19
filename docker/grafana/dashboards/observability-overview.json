@@ -123,6 +123,71 @@
           "legendFormat": "{{operation}}"
         }
       ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Value #A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Max Duration (ms)"
+              },
+              {
+                "id": "unit",
+                "value": "ms"
+              },
+              {
+                "id": "decimals",
+                "value": 0
+              },
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          }
+        ]
+      },
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": true,
+              "service": true,
+              "task_id": true,
+              "task_name": true,
+              "environment": true,
+              "container": true,
+              "job": true,
+              "level": true,
+              "logger": true
+            },
+            "renameByName": {
+              "operation": "Operation"
+            },
+            "indexByName": {
+              "operation": 0,
+              "Value #A": 1
+            }
+          }
+        },
+        {
+          "id": "sortBy",
+          "options": {
+            "fields": [
+              {
+                "displayName": "Max Duration (ms)",
+                "desc": true
+              }
+            ]
+          }
+        }
+      ],
       "options": {
         "showHeader": true,
         "footer": {

@@ -1,0 +1,349 @@
+{
+  "info": {
+    "_postman_id": "f4f7030b-6fd4-4d91-a4fd-7bc3f7cc7f3f",
+    "name": "R.A.V.I.D. Backend Assessment API",
+    "description": "Reviewer-ready Postman collection for the assessment API. Canonical endpoints use trailing slashes, while slashless aliases are accepted at runtime.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "email",
+      "value": "reviewer@example.com"
+    },
+    {
+      "key": "password",
+      "value": "Sup3rSecret!"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "fileId",
+      "value": ""
+    },
+    {
+      "key": "taskId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "email",
+              "value": "{{email}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "text"
+            },
+            {
+              "key": "confirm_password",
+              "value": "{{password}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/register/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "register",
+            ""
+          ]
+        },
+        "description": "Public endpoint. Creates a new account and returns `user_id`."
+      }
+    },
+    {
+      "name": "2. Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const payload = pm.response.json();",
+              "if (payload.access) { pm.collectionVariables.set('accessToken', payload.access); }",
+              "if (payload.refresh) { pm.collectionVariables.set('refreshToken', payload.refresh); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "email",
+              "value": "{{email}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "login",
+            ""
+          ]
+        },
+        "description": "Public endpoint. Returns JWT `access` and `refresh` tokens."
+      }
+    },
+    {
+      "name": "3. Upload CSV",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const payload = pm.response.json();",
+              "if (payload.file_id !== undefined) { pm.collectionVariables.set('fileId', String(payload.file_id)); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "tests/fixtures/csv/basic_users.csv"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/upload-csv/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "upload-csv",
+            ""
+          ]
+        },
+        "description": "Protected endpoint. Uploads a CSV and returns `file_id`."
+      }
+    },
+    {
+      "name": "4. Perform Operation (dedup)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const payload = pm.response.json();",
+              "if (payload.task_id) { pm.collectionVariables.set('taskId', payload.task_id); }"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"file_id\": {{fileId}},\n  \"operation\": \"dedup\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/perform-operation/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "perform-operation",
+            ""
+          ]
+        },
+        "description": "Protected endpoint. Starts an async dedup task and returns `task_id`."
+      }
+    },
+    {
+      "name": "5. Perform Operation (unique)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"file_id\": {{fileId}},\n  \"operation\": \"unique\",\n  \"column\": \"name\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/perform-operation/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "perform-operation",
+            ""
+          ]
+        },
+        "description": "Protected endpoint. `column` is required for `unique`."
+      }
+    },
+    {
+      "name": "6. Perform Operation (filter)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"file_id\": {{fileId}},\n  \"operation\": \"filter\",\n  \"filters\": [\n    {\n      \"field\": \"name\",\n      \"operator\": \"contains\",\n      \"value\": \"Ada\"\n    }\n  ]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/perform-operation/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "perform-operation",
+            ""
+          ]
+        },
+        "description": "Protected endpoint. `filters` array is required for `filter`."
+      }
+    },
+    {
+      "name": "7. Task Status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/task-status/?task_id={{taskId}}&n=100",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "task-status",
+            ""
+          ],
+          "query": [
+            {
+              "key": "task_id",
+              "value": "{{taskId}}"
+            },
+            {
+              "key": "n",
+              "value": "100"
+            }
+          ]
+        },
+        "description": "Protected endpoint. Returns `PENDING`, `SUCCESS`, or `FAILURE`."
+      }
+    },
+    {
+      "name": "8. Download Processed Output",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{accessToken}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/operations/{{taskId}}/download/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "operations",
+            "{{taskId}}",
+            "download",
+            ""
+          ]
+        },
+        "description": "Protected endpoint. Downloads the processed CSV for the owner."
+      }
+    }
+  ]
+}

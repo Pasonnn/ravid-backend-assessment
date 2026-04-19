@@ -76,16 +76,16 @@ Break the assessment into a practical execution order that supports fast deliver
 
 ## Acceptance Checklist
 
-- [ ] registration works
-- [ ] login works
-- [ ] protected routes require JWT
-- [ ] CSV upload works
-- [ ] `dedup` works
-- [ ] `unique` works
-- [ ] `filter` works
-- [ ] task status works
-- [ ] processed file download works
-- [ ] structured logs flow into Grafana
-- [ ] Docker Compose runs the stack
-- [ ] README is complete
-- [ ] API docs are complete
+- [x] registration works
+- [x] login works
+- [x] protected routes require JWT
+- [x] CSV upload works
+- [x] `dedup` works
+- [x] `unique` works
+- [x] `filter` works
+- [x] task status works
+- [x] processed file download works
+- [x] structured logs flow into Grafana
+- [x] Docker Compose runs the stack
+- [x] README is complete
+- [x] API docs are complete
